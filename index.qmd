@@ -125,7 +125,7 @@ Percebemos um aumento nos últimos meses do ano e valores de outliers em alguns 
 ## Divisão da Série:
 
 **Fazendo a divisão da série em teste e treino**
-
+::: {style="font-size: 50%;"}
 Será feita um divisão na série em teste e treino, onde:
 
 - A série de treino vai até o final do ano de 2022
@@ -133,7 +133,7 @@ Será feita um divisão na série em teste e treino, onde:
 - A série de teste começa do ano de 2023 até março de 2025
 
 Assim sendo um divisão de 27 observações a serem prevista nos teste dos modelos
-
+:::
 ```{}
 # A série começa em Janeiro de 2004
 ts_ceara <- ts(ceara_data$consumo_gwh, start = c(2004, 1), frequency = 12)
@@ -284,6 +284,7 @@ s_t &= \gamma \cdot \frac{y_t}{l_t} + (1 - \gamma) \cdot s_{t-m}
 summary(modelo_ets)
 
 ```
+::: {style="font-size: 50%;"}
 - Modelo selecionado pelo melhor AIC
 
 * **Alpha (nível):** $\alpha = 0,7001$
@@ -296,10 +297,10 @@ summary(modelo_ets)
 * **AIC:** $5878,418$
 
 **Sazonalidade inicial:** $s_1 = 1,033, \ldots, s_{12} = 1,0149$
-
+:::
 
 ## Método de Suavização Exponencial
-
+::: {style="font-size: 50%;"}
 **Métricas de desempenho no conjunto de treino:**
 
 * RMSE: 26.608,53
@@ -310,7 +311,7 @@ summary(modelo_ets)
 
 * ACF dos resíduos: 0,066 ⇒ Baixa autocorrelação
 
-
+:::
 ## Método de Suavização Exponencial
 
 - Formula do modelo
@@ -399,7 +400,7 @@ O objetivo é encontrar o modelo que melhor se ajusta aos dados.
 
 ## Metodologia Box-Jenkins
 
-::: {style="font-size: 70%;"}
+::: {style="font-size: 50%;"}
  **Processo Iterativo em 4 Etapas**
 
 1.  **Identificação do Modelo**
@@ -494,9 +495,11 @@ kpss.test(treino)
 
 ```
 
-::: {style="font-size: 70%;"}
-
 Com base nos resultados dos testes, a sua série temporal `treino` **não é estacionária**.
+
+## Análises Primárias da série e Ajustes:
+
+::: {style="font-size: 50%;"}
 
 Ambos os testes, apesar de terem hipóteses opostas, apontam para a mesma conclusão.
 
@@ -581,7 +584,7 @@ gerar_diagnostico2_ts(ts_diff)
 
 ## Análises Primárias da série e Ajustes:
 
-::: {style="font-size: 60%;"}
+::: {style="font-size: 50%;"}
 **Modelo Proposto Inicial: $SARIMA(1, 1, 1)(1, 0,0)^{12}$**
 
 | Componente | Ordem | Justificativa |
@@ -603,7 +606,7 @@ temos uma melhora da série e os testes de Dickey-Fuller e KPSS deu que a série
 
 
 ## Sugestão Modelo 1
-::: {style="font-size: 60%;"}
+::: {style="font-size: 50%;"}
 
 A fórmula é:
 
@@ -657,7 +660,7 @@ gerar_diagnostico2_ts(Modelo1$residuals)
 Os gráficos indicam que os resíduos do modelo se comportam como ruído branco, sem autocorrelação, sugerindo um bom ajuste,mas que pode ser melhorado.
 
 
-## Sugestão de outro Modelo
+# Sugestão de um Modelo 2
 
 
 ## Análises Primárias da série e Ajustes:
@@ -687,7 +690,7 @@ gerar_diagnostico2_ts(ts_diff_12 )
 
 ## Sugestão Modelo 2
 
-::: {style="font-size: 60%;"}
+::: {style="font-size: 50%;"}
 
 A fórmula é:
 
@@ -734,7 +737,7 @@ O modelo SARIMA(1,1,1)(1,1,1)[12] apresenta um excelente ajuste aos dados de tre
 ```{r, fig.align='center'}
 gerar_diagnostico2_ts(Modelo2$residuals) 
 ```
-::: {style="font-size: 60%;"}
+::: {style="font-size: 50%;"}
 Gráfico da Série: Os resíduos flutuam aleatoriamente em torno de zero, sem qualquer tendência ou padrão visível.
 
 ACF e PACF: Os gráficos de autocorrelação e autocorrelação parcial mostram que praticamente todos os lags estão dentro dos limites de significância (linhas azuis). Isso indica que não há autocorrelação remanescente, um forte sinal de que os resíduos se comportam como ruído branco.
@@ -822,7 +825,7 @@ detectIO(Modelo3)
 detectAO(Modelo3)
 detectIO(Modelo3)
 ```
-::: {style="font-size: 60%;"}
+::: {style="font-size: 50%;"}
 Este resultado indica que o algoritmo de detecção de outliers encontrou um evento estatisticamente significativo na sua série temporal.
 
 * **Evento Detectado:** Um outlier significativo foi identificado no **ponto de índice 196** da série .
@@ -850,9 +853,6 @@ outlier_ao_196[196] <- 1
 
 
 ```{r}
-# Carregue a biblioteca 'forecast' para usar a função Arima (maiúsculo)
-library(forecast)
-
 # Ajuste o modelo SARIMA incluindo o regressor do outlier
 # Use a função Arima() do pacote forecast, que lida melhor com xreg
 Modelo3_com_outlier <- Arima(treino, 
@@ -899,7 +899,7 @@ autoplot(previsao_modelo2) +
 ## Modelo Final 
 
 
-::: {style="font-size: 60%;"}
+::: {style="font-size: 50%;"}
 
 | Componente | Termo na Equação | Valor/Parâmetro Estimado | Descrição |
 | :--- | :--- | :--- | :--- |

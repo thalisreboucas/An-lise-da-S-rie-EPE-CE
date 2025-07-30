@@ -215,13 +215,12 @@ Thalis Rebouças
 </section>
 <section class="slide level2">
 <h2>Divisão da Série:</h2>
-<p><strong>Fazendo a divisão da série em teste e treino</strong></p>
-<p>Será feita um divisão na série em teste e treino, onde:</p>
+<p><strong>Fazendo a divisão da série em teste e treino</strong> ::: {style=“font-size: 50%;”} Será feita um divisão na série em teste e treino, onde:</p>
 <ul>
 <li><p>A série de treino vai até o final do ano de 2022</p></li>
 <li><p>A série de teste começa do ano de 2023 até março de 2025</p></li>
 </ul>
-<p>Assim sendo um divisão de 27 observações a serem prevista nos teste dos modelos</p>
+<p>Assim sendo um divisão de 27 observações a serem prevista nos teste dos modelos :::</p>
 <pre><code># A série começa em Janeiro de 2004
 ts_ceara &lt;- ts(ceara_data$consumo_gwh, start = c(2004, 1), frequency = 12)
 # 2. Criar o conjunto de TREINO usando a função window()
@@ -306,6 +305,7 @@ s_t &amp;= \gamma \cdot \frac{y_t}{l_t} + (1 - \gamma) \cdot s_{t-m}
 <h2>Método de Suavização Exponencial</h2>
 <pre><code>summary(modelo_ets)
 </code></pre>
+<div style="font-size: 50%;">
 <ul>
 <li><p>Modelo selecionado pelo melhor AIC</p></li>
 <li><p><strong>Alpha (nível):</strong> <span class="math inline">\(\alpha = 0,7001\)</span></p></li>
@@ -318,9 +318,11 @@ s_t &amp;= \gamma \cdot \frac{y_t}{l_t} + (1 - \gamma) \cdot s_{t-m}
 <li><p><strong>AIC:</strong> <span class="math inline">\(5878,418\)</span></p></li>
 </ul>
 <p><strong>Sazonalidade inicial:</strong> <span class="math inline">\(s_1 = 1,033, \ldots, s_{12} = 1,0149\)</span></p>
+</div>
 </section>
 <section class="slide level2">
 <h2>Método de Suavização Exponencial</h2>
+<div style="font-size: 50%;">
 <p><strong>Métricas de desempenho no conjunto de treino:</strong></p>
 <ul>
 <li><p>RMSE: 26.608,53</p></li>
@@ -328,6 +330,7 @@ s_t &amp;= \gamma \cdot \frac{y_t}{l_t} + (1 - \gamma) \cdot s_{t-m}
 <li><p>MAPE: 2,29% ⇒ Erro percentual muito baixo</p></li>
 <li><p>ACF dos resíduos: 0,066 ⇒ Baixa autocorrelação</p></li>
 </ul>
+</div>
 </section>
 <section class="slide level2">
 <h2>Método de Suavização Exponencial</h2>
@@ -400,7 +403,7 @@ Test set     0.25875513  1.389201</code></pre>
 </section>
 <section class="slide level2">
 <h2>Metodologia Box-Jenkins</h2>
-<div style="font-size: 70%;">
+<div style="font-size: 50%;">
 <p><strong>Processo Iterativo em 4 Etapas</strong></p>
 <ol type="1">
 <li><strong>Identificação do Modelo</strong>
@@ -458,8 +461,11 @@ data:  treino
 KPSS Level = 4.4547, Truncation lag parameter = 4, p-value = 0.01</code></pre>
 </div>
 </div>
-<div style="font-size: 70%;">
 <p>Com base nos resultados dos testes, a sua série temporal <code>treino</code> <strong>não é estacionária</strong>.</p>
+</section>
+<section class="slide level2">
+<h2>Análises Primárias da série e Ajustes:</h2>
+<div style="font-size: 50%;">
 <p>Ambos os testes, apesar de terem hipóteses opostas, apontam para a mesma conclusão.</p>
 <hr>
 <p><strong>Teste Augmented Dickey-Fuller (ADF)</strong></p>
@@ -514,7 +520,7 @@ kpss.test(ts_diff)</code></pre>
 </section>
 <section class="slide level2">
 <h2>Análises Primárias da série e Ajustes:</h2>
-<div style="font-size: 60%;">
+<div style="font-size: 50%;">
 <p><strong>Modelo Proposto Inicial: <span class="math inline">\(SARIMA(1, 1, 1)(1, 0,0)^{12}\)</span></strong></p>
 <table class="caption-top">
 <colgroup>
@@ -573,7 +579,7 @@ kpss.test(ts_diff)</code></pre>
 </section>
 <section class="slide level2">
 <h2>Sugestão Modelo 1</h2>
-<div style="font-size: 60%;">
+<div style="font-size: 50%;">
 <p>A fórmula é:</p>
 <p><span class="math inline">\(SARIMA(1, 1, 1)(1, 0, 0)_{12}\)</span></p>
 <h3>Detalhamento dos Componentes</h3>
@@ -631,9 +637,11 @@ Training set 4622.065 29490.9 22057.06 0.5171221 2.607869 0.4816191 -0.01643013<
 <h2>Diagnóstico Modelo 1</h2>
 
 <img data-src="index_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><p>Os gráficos indicam que os resíduos do modelo se comportam como ruído branco, sem autocorrelação, sugerindo um bom ajuste,mas que pode ser melhorado.</p>
-</section>
-<section class="slide level2">
-<h2>Sugestão de outro Modelo</h2>
+</section></section>
+<section>
+<section class="title-slide slide level1 center">
+<h1>Sugestão de um Modelo 2</h1>
+
 </section>
 <section class="slide level2">
 <h2>Análises Primárias da série e Ajustes:</h2>
@@ -647,7 +655,7 @@ kpss.test(ts_diff_12)</code></pre>
 <img data-src="index_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
 <section class="slide level2">
 <h2>Sugestão Modelo 2</h2>
-<div style="font-size: 60%;">
+<div style="font-size: 50%;">
 <p>A fórmula é:</p>
 <p><span class="math inline">\(SARIMA(1, 1, 1)(1, 1, 1)_{12}\)</span></p>
 <h3>Detalhamento dos Componentes</h3>
@@ -704,7 +712,7 @@ Training set -0.02809811</code></pre>
 <section class="slide level2">
 <h2>Sugestão Modelo 2</h2>
 
-<img data-src="index_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><div style="font-size: 60%;">
+<img data-src="index_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><div style="font-size: 50%;">
 <p>Gráfico da Série: Os resíduos flutuam aleatoriamente em torno de zero, sem qualquer tendência ou padrão visível.</p>
 <p>ACF e PACF: Os gráficos de autocorrelação e autocorrelação parcial mostram que praticamente todos os lags estão dentro dos limites de significância (linhas azuis). Isso indica que não há autocorrelação remanescente, um forte sinal de que os resíduos se comportam como ruído branco.</p>
 </div>
@@ -775,7 +783,7 @@ ind     196.000000
 lambda1  -4.841556</code></pre>
 </div>
 </div>
-<div style="font-size: 60%;">
+<div style="font-size: 50%;">
 <p>Este resultado indica que o algoritmo de detecção de outliers encontrou um evento estatisticamente significativo na sua série temporal.</p>
 <ul>
 <li><p><strong>Evento Detectado:</strong> Um outlier significativo foi identificado no <strong>ponto de índice 196</strong> da série .</p></li>
@@ -826,7 +834,7 @@ Training set -0.02008813</code></pre>
 <img data-src="index_files/figure-revealjs/unnamed-chunk-24-1.png" width="960" class="r-stretch"></section>
 <section class="slide level2">
 <h2>Modelo Final</h2>
-<div style="font-size: 60%;">
+<div style="font-size: 50%;">
 <table class="caption-top">
 <colgroup>
 <col style="width: 25%">
