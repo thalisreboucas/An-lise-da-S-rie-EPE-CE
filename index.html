@@ -141,16 +141,15 @@ Thalis Rebouças
 </section>
 <section class="slide level2">
 <h2>Sumário de aprendizagem</h2>
-<div style="font-size: 70%;">
+<div style="font-size: 80%;">
 <ul>
 <li><p>Resumo Geral</p>
 <ol type="1">
 <li><p>Motivo da Escolha da Série</p></li>
 <li><p>Apresentação da Série</p></li>
-<li><p>Análises Primárias da série e Ajustes</p></li>
 </ol></li>
 <li><p>Estimação dos Modelos de Série Temporal</p>
-<ol start="4" type="1">
+<ol start="3" type="1">
 <li><p>Método de Suavização Exponencial</p></li>
 <li><p>Metodologia Box-Jenkins</p></li>
 <li><p>Análise de Intervenções</p></li>
@@ -196,27 +195,24 @@ Thalis Rebouças
 </ul>
 <p>Neste caso, vou me restringir a análisar apenas o consumo do Ceará na parte de consumo de energia elétrica na rede (MWh) de Sistema Simples.</p>
 <ul>
-<li>É possivél entender melhor os dados e análises que o governo faz [neste link](https://www.epe.gov.br/pt/publicacoes-dados-abertos/publicacoes/consumo-de-energia-eletrica#:~:text=A%20EPE%20disponibiliza%20o%20arquivo%20com%20a%20s%C3%A9rie,e%20outros%20(rural,%20servi%C3%A7o%20p%C3%BAblico%20e%20ilumina%C3%A7%C3%A3o%20p%C3%BAblica).</li>
+<li>É possivél entender melhor os dados e análises que o governo faz <a href="https://encurtador.com.br/6qoRG">neste link</a>.</li>
 </ul>
 </section>
 <section class="slide level2">
 <h2>Apresentação da série:</h2>
+<div style="font-size: 70%;">
 <p>A série começa em janeiro de 2004 e vai até março de 2025,com isso tem cerca de 255 observações,vamos olhar o <strong>gráfico da série:</strong></p>
+</div>
 
-<img data-src="index_files/figure-revealjs/unnamed-chunk-1-1.png" width="960" class="r-stretch"></section>
+<img data-src="index_files/figure-revealjs/unnamed-chunk-1-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
 <section class="slide level2">
 <h2>Apresentação da série:</h2>
 <p>Fazendo o gráfico box-plot separados por mês,quadrimestre e ano.</p>
 
-<img data-src="index_files/figure-revealjs/unnamed-chunk-2-1.png" width="960" class="r-stretch"><p>Percebemos um aumento nos últimos meses do ano e valores de outliers em alguns anos.</p>
-</section></section>
-<section>
-<section class="title-slide slide level1 center">
-<h1>Análises Primárias da série e Ajustes</h1>
-
+<img data-src="index_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><p>Percebemos um aumento nos últimos meses do ano e valores de outliers em alguns anos.</p>
 </section>
 <section class="slide level2">
-<h2>Análises Primárias da série e Ajustes:</h2>
+<h2>Divisão da Série:</h2>
 <p><strong>Fazendo a divisão da série em teste e treino</strong></p>
 <p>Será feita um divisão na série em teste e treino, onde:</p>
 <ul>
@@ -230,30 +226,7 @@ ts_ceara &lt;- ts(ceara_data$consumo_gwh, start = c(2004, 1), frequency = 12)
 treino &lt;- window(ts_ceara, end = c(2022, 12))
 # 3. Criar o conjunto de TESTE usando a função window()
 teste &lt;- window(ts_ceara, start = c(2023, 1), end = c(2025, 3))</code></pre>
-</section>
-<section class="slide level2">
-<h2>Análises Primárias da série e Ajustes:</h2>
-<p>Podemos decompor a serie para ver a sazonalidade e estacionáridade,</p>
-
-<img data-src="index_files/figure-revealjs/unnamed-chunk-3-1.png" width="960" class="r-stretch"><p><strong>Percebe-se um tendência práticamente linear cresente e uma série serrote, vamos olhar os lags para ver se tem tendência.</strong></p>
-</section>
-<section class="slide level2">
-<h2>Análises Primárias da série e Ajustes:</h2>
-<p>Análisando os lags da série:</p>
-
-<img data-src="index_files/figure-revealjs/unnamed-chunk-4-1.png" width="960" class="r-stretch"><p>Temos um forte evidência do modelo ser um autoregressivo de ordem 1 ou 2 e que a parte de médias móveis precisa tem um tratamento para aparecer, mesmo que no limte um sazonalidade no lag 12 ~ 14.</p>
-</section>
-<section class="slide level2">
-<h2>Análises Primárias da série e Ajustes:</h2>
-<p>Análisando os dados da Série da <strong>primeira diferança</strong>:</p>
-
-<img data-src="index_files/figure-revealjs/unnamed-chunk-5-1.png" width="960" class="r-stretch"><p>temos uma melhora da série e o teste do Dickey-Fuller deu que a série é estacionaria</p>
-</section>
-<section class="slide level2">
-<h2>Análises Primárias da série e Ajustes:</h2>
-<p>Análisando os dados da Série da <strong>primeira diferança normal e uma sazonal</strong>:</p>
-
-<img data-src="index_files/figure-revealjs/unnamed-chunk-6-1.png" width="960" class="r-stretch"></section></section>
+</section></section>
 <section>
 <section class="title-slide slide level1 center">
 <h1>Método de Suavização Exponencial</h1>
@@ -363,23 +336,23 @@ s_t &amp;= 0{,}0001 \cdot \frac{y_t}{l_t} + (1 - 0{,}0001) \cdot s_{t-12}
 <section class="slide level2">
 <h2>Método de Suavização Exponencial</h2>
 
-<img data-src="index_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch"><ul>
-<li>Modelo meio ajustado</li>
-<li>Captura tendência suavizada e sazonalidade proporcional fraca</li>
-<li>Resíduos sem padrão aparente</li>
+<img data-src="index_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><ul>
+<li><p>Modelo quase ajustado</p></li>
+<li><p>Captura tendência suavizada e sazonalidade proporcional fraca</p></li>
+<li><p>Resíduos sem padrão aparente</p></li>
 </ul>
 </section>
 <section class="slide level2">
 <h2>Método de Suavização Exponencial</h2>
 
-<img data-src="index_files/figure-revealjs/unnamed-chunk-9-1.png" width="960" class="r-stretch"></section>
+<img data-src="index_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
 <section class="slide level2">
 <h2>Método de Suavização Exponencial</h2>
 <ul>
 <li>Acurácia do Modelo ETS no Conjunto de Teste</li>
 </ul>
 <pre><code>print(acuracia_ets)</code></pre>
-<div class="cell">
+<div class="cell" data-layout-align="center">
 <div class="cell-output cell-output-stdout">
 <pre><code>                    ME     RMSE      MAE       MPE     MAPE      MASE
 Training set  2256.726 26608.53 19550.13 0.2166755 2.290358 0.4268799
@@ -391,81 +364,279 @@ Test set     0.25875513  1.389201</code></pre>
 </div>
 <p>O modelo apresenta um desempenho ruim no conjunto de teste. Embora tenha se ajustado razoavelmente bem aos dados de treinamento, ele não conseguiu generalizar essa performance para os dados futuros (o conjunto de teste).</p>
 </section></section>
+<section>
 <section class="title-slide slide level1 center">
 <h1>Metodologia Box-Jenkins</h1>
-<pre><code># --- TÓPICO 4: METODOLOGIA DE BOX-JENKINS (ARIMA)  ---
 
-# 4.1. Análise de Estacionariedade no Treino [cite: 23]
-# Teste Augmented Dickey-Fuller (ADF)
-# H0: a série não é estacionária (possui raiz unitária)
-summary(ur.df(serie_treino, type = "trend", lags = 12)) # p-valor alto, não rejeita H0
-
-# Teste Kwiatkowski-Phillips-Schmidt-Shin (KPSS)
-# H0: a série é estacionária
-summary(ur.kpss(serie_treino, type = "tau")) # Estatística de teste &gt; valor crítico, rejeita H0
-# Conclusão: a série não é estacionária.
-
-# 4.2. Diferenciação para obter estacionariedade [cite: 23]
-# Aplicar uma diferença sazonal (d=1, D=1)
-serie_diff &lt;- diff(diff(serie_treino, lag = 12), lag = 1)
-
-# Verificar estacionariedade da série diferenciada
-summary(ur.df(serie_diff, type = "drift", lags = 12)) # p-valor baixo, rejeita H0. OK!
-summary(ur.kpss(serie_diff, type = "mu")) # Estatística &lt; valor crítico. OK!
-# Conclusão: a série diferenciada é estacionária.
-
-# 4.3. Análise dos gráficos ACF e PACF 
-ggtsdisplay(serie_diff, main="ACF/PACF da Série Diferenciada (d=1, D=1)")
-
-# 4.4. Estimação do Modelo 
-
-# Modelo 1: Usando auto.arima() como baseline
-modelo_auto_arima &lt;- auto.arima(serie_treino, stepwise = FALSE, approximation = FALSE)
-summary(modelo_auto_arima) # Sugeriu ARIMA(2,1,1)(0,1,1)[12]
-
-# Diagnóstico do modelo auto.arima
-checkresiduals(modelo_auto_arima) # Ljung-Box p-value é baixo (0.01213), resíduos não são ruído branco.
-
-# Modelo 2: Tentativa manual baseada no ACF/PACF e experimentação
-# O ACF/PACF sugere componentes sazonais mais complexos.
-# Vamos testar SARIMA(0,1,1)(2,1,1)[12]
-modelo_final_arima &lt;- Arima(serie_treino, order=c(0,1,1), seasonal=c(2,1,1))
-summary(modelo_final_arima)
-
-# Diagnóstico do modelo final
-checkresiduals(modelo_final_arima) # Ljung-Box p-value = 0.1384. Resíduos são ruído branco!
-# Este é o nosso modelo final.
-
-# 4.5. Previsão com o modelo final
-previsao_arima &lt;- forecast(modelo_final_arima, h = 24)
-
-# Gráfico da previsão ARIMA vs. dados de teste
-autoplot(previsao_arima) +
-  autolayer(serie_teste, series="Dados Reais") +
-  labs(title='Gráfico 3: Previsão com SARIMA(0,1,1)(2,1,1)₁₂ vs. Dados de Teste',
-       x='Ano', y='Índice',
-       caption = 'Linha azul: Previsão ARIMA. Sombreado: Intervalos de Confiança.') +
-  theme_minimal()
-
-# Obter as medidas de ajuste no conjunto de teste
-acuracia_arima &lt;- accuracy(previsao_arima, serie_teste)
-cat("\n--- Acurácia do Modelo ARIMA Final no Conjunto de Teste ---\n")
-print(acuracia_arima)
-
-
-# --- TÓPICO 5: COMPARAÇÃO DOS MODELOS  ---
-
-cat("\n\n--- Comparação Final dos Modelos (Métricas no Conjunto de Teste) ---\n")
-print("Modelo ETS(M,A,M):")
-print(acuracia_ets[2, c("RMSE", "MAE", "MAPE")]) # Linha 2 é do conjunto de teste
-print("Modelo SARIMA(0,1,1)(2,1,1)[12]:")
-print(acuracia_arima[2, c("RMSE", "MAE", "MAPE")])
-</code></pre>
 </section>
+<section class="slide level2">
+<h2>Metodologia Box-Jenkins</h2>
+<p>Uma abordagem sistemática para análise e previsão de Séries Temporais</p>
+<p><strong>Modelo Central: ARIMA(p, d, q)</strong></p>
+<p>O objetivo é encontrar o modelo que melhor se ajusta aos dados.</p>
+<ul>
+<li><strong>AR (p): Autoregressivo</strong>
+<ul>
+<li>Dependência dos <strong>valores passados</strong> da própria série.</li>
+</ul></li>
+<li><strong>I (d): Integrado</strong>
+<ul>
+<li>Número de <strong>diferenciações</strong> necessárias para tornar a série estacionária.</li>
+</ul></li>
+<li><strong>MA (q): Média Móvel</strong>
+<ul>
+<li>Dependência dos <strong>erros de previsão passados</strong>.</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+<h2>Metodologia Box-Jenkins</h2>
+<div style="font-size: 70%;">
+<p><strong>Processo Iterativo em 4 Etapas</strong></p>
+<ol type="1">
+<li><strong>Identificação do Modelo</strong>
+<ul>
+<li>Verificar e ajustar a <strong>estacionariedade</strong> da série (usando diferenciação <code>d</code>).</li>
+<li>Analisar gráficos de <strong>Autocorrelação (FAC)</strong> e <strong>Autocorrelação Parcial (FACP)</strong> para sugerir as ordens <code>p</code> e <code>q</code>.</li>
+</ul></li>
+<li><strong>Estimação dos Parâmetros</strong>
+<ul>
+<li>Calcular os coeficientes do modelo ARIMA(p, d, q) candidato.</li>
+</ul></li>
+<li><strong>Verificação de Diagnóstico</strong>
+<ul>
+<li>Analisar os <strong>resíduos</strong> do modelo: eles devem se comportar como ruído branco (aleatórios e sem padrão).</li>
+<li>Se o modelo for inadequado, retorna-se à Etapa 1.</li>
+</ul></li>
+<li><strong>Previsão</strong>
+<ul>
+<li>Com um modelo validado, utilizá-lo para prever valores futuros.</li>
+</ul></li>
+</ol>
+<p><strong>Pontos-Chave</strong></p>
+<ul>
+<li><strong>Guiado pelos Dados:</strong> A estrutura do modelo é definida pelos padrões encontrados nos próprios dados.</li>
+<li><strong>Iterativo:</strong> É um ciclo de identificação, ajuste e verificação.</li>
+<li><strong>Objetivo:</strong> Construir um modelo estatisticamente robusto para gerar previsões precisas.</li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+<h2>Análises Primárias da série e Ajustes:</h2>
+<p>Podemos decompor a serie para ver a sazonalidade e estacionáridade,</p>
 
+<img data-src="index_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch"><p><strong>Percebe-se um tendência práticamente linear cresente e uma série serrote, vamos olhar os lags para ver se tem tendência.</strong></p>
+</section>
+<section class="slide level2">
+<h2>Análises Primárias da série e Ajustes:</h2>
+<pre><code>adf.test(treino) 
+kpss.test(treino) 
+</code></pre>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Augmented Dickey-Fuller Test
+
+data:  treino
+Dickey-Fuller = -3.1698, Lag order = 6, p-value = 0.09388
+alternative hypothesis: stationary</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    KPSS Test for Level Stationarity
+
+data:  treino
+KPSS Level = 4.4547, Truncation lag parameter = 4, p-value = 0.01</code></pre>
+</div>
+</div>
+<div style="font-size: 70%;">
+<p>Com base nos resultados dos testes, a sua série temporal <code>treino</code> <strong>não é estacionária</strong>.</p>
+<p>Ambos os testes, apesar de terem hipóteses opostas, apontam para a mesma conclusão.</p>
+<hr>
+<p><strong>Teste Augmented Dickey-Fuller (ADF)</strong></p>
+<p>O teste ADF busca evidências de que a série <em>é estacionária</em>.</p>
+<ul>
+<li><strong>Hipótese Nula (<span class="math inline">\(H_0\)</span>)</strong>: A série <strong>não é estacionária</strong> (possui raiz unitária).</li>
+<li><strong>Seu resultado</strong>: O p-valor foi de <strong>0.09388</strong>.</li>
+</ul>
+<p>Como o p-valor (0.09) é <strong>maior</strong> que o nível de significância padrão (0.05), você <strong>falha em rejeitar</strong> a hipótese nula. Isso significa que, segundo o teste ADF, a série é considerada <strong>não estacionária</strong>.</p>
+<hr>
+<p><strong>Teste KPSS</strong></p>
+<p>O teste KPSS, por outro lado, busca evidências de que a série <em>não é estacionária</em>.</p>
+<ul>
+<li><strong>Hipótese Nula (<span class="math inline">\(H_0\)</span>)</strong>: A série <strong>é estacionária</strong>.</li>
+<li><strong>Seu resultado</strong>: O p-valor foi de <strong>0.01</strong>.</li>
+</ul>
+<p>Como o p-valor (0.01) é <strong>menor</strong> que o nível de significância (0.05), você <strong>rejeita</strong> a hipótese nula. Isso significa que o teste KPSS também conclui que a série é <strong>não estacionária</strong>.</p>
+<p><strong>Conclusão Final</strong></p>
+<p>Ambos os testes confirmam que a série <code>treino</code> <strong>não é estacionária</strong>. O próximo passo na modelagem ARIMA seria aplicar a <strong>diferenciação</strong> na série para tentar torná-la estacionária. 👍</p>
+</div>
+</section>
+<section class="slide level2">
+<h2>Análises Primárias da série e Ajustes:</h2>
+<p>Análisando os lags da série:</p>
+<pre><code>gerar_diagnostico_ts(ts_ceara)</code></pre>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><p>Temos um forte evidência do modelo ser um autoregressivo de ordem 1 ou 2 e que a parte de médias móveis precisa tem um tratamento para aparecer, mesmo que no limte um sazonalidade no lag 12 ~ 14.</p>
+</section>
+<section class="slide level2">
+<h2>Análises Primárias da série e Ajustes:</h2>
+<p>Análisando os dados da Série da <strong>primeira diferança</strong>:</p>
+<pre><code>ts_diff= diff(ts_ceara)
+gerar_diagnostico2_ts(ts_diff)
+adf.test(ts_diff)
+kpss.test(ts_diff)</code></pre>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><div style="font-size: 60%;">
+<p><strong>Principais Observações</strong></p>
+<ul>
+<li><p><strong>Estacionariedade:</strong> A série se tornou estacionária após <strong>1 diferenciação</strong> (<code>d=1</code>).</p></li>
+<li><p><strong>Sazonalidade Anual:</strong> Padrão sazonal muito forte, com “spikes” significativos nos <strong>lags 12 e 24</strong> nos gráficos ACF e PACF.</p>
+<ul>
+<li>O spike claro no <strong>PACF</strong> no lag 12 sugere um componente <strong>AR Sazonal (P=1)</strong>.</li>
+</ul></li>
+<li><p><strong>Componente Não-Sazonal:</strong> O <strong>PACF</strong> corta abruptamente após o lag 1.</p>
+<ul>
+<li>Isso sugere um componente <strong>AR(1) (p=1)</strong>.</li>
+</ul></li>
+</ul>
+<p><strong>Modelo Proposto: <span class="math inline">\(SARIMA(1, 1, 0)(1, 0, 0)^12\)</span></strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Componente</th>
+<th style="text-align: center;">Ordem</th>
+<th style="text-align: left;">Justificativa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>p</strong> (AR Não-sazonal)</td>
+<td style="text-align: center;"><strong>1</strong></td>
+<td style="text-align: left;">Corte no PACF no lag 1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>d</strong> (Diferenciação)</td>
+<td style="text-align: center;"><strong>1</strong></td>
+<td style="text-align: left;">Aplicada para obter estacionariedade</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>q</strong> (MA Não-sazonal)</td>
+<td style="text-align: center;"><strong>0</strong></td>
+<td style="text-align: left;">Ponto de partida simples</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>P</strong> (AR Sazonal)</td>
+<td style="text-align: center;"><strong>1</strong></td>
+<td style="text-align: left;">Spike significativo no PACF no lag 12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>D</strong> (Dif. Sazonal)</td>
+<td style="text-align: center;"><strong>0</strong></td>
+<td style="text-align: left;">Não parece necessária</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Q</strong> (MA Sazonal)</td>
+<td style="text-align: center;"><strong>0</strong></td>
+<td style="text-align: left;">Ponto de partida simples</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>s</strong> (Período Sazonal)</td>
+<td style="text-align: center;"><strong>12</strong></td>
+<td style="text-align: left;">Padrão anual</td>
+</tr>
+</tbody>
+</table>
+<p>temos uma melhora da série e os testes de Dickey-Fuller e KPSS deu que a série é estacionaria.</p>
+</div>
+</section>
+<section class="slide level2">
+<h2>Análises Primárias da série e Ajustes:</h2>
+<p>Análisando os dados da Série da <strong>primeira diferança normal e uma sazonal</strong>:</p>
+<pre><code>
+ts_diff_12 = diff(diff(ts_ceara),12)
+gerar_diagnostico2_ts(ts_diff_12 )
+adf.test(ts_diff_12)
+kpss.test(ts_diff_12)</code></pre>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><p>Os testes de Dickey-Fuller e KPSS deu que a série é estacionaria.</p>
+</section>
+<section class="slide level2">
+<h2>modelos</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Series: treino 
+ARIMA(1,1,0)(1,0,0)[12] 
+
+Coefficients:
+          ar1    sar1
+      -0.1036  0.2753
+s.e.   0.0702  0.0701
+
+sigma^2 = 925628163:  log likelihood = -2664.89
+AIC=5335.78   AICc=5335.89   BIC=5346.06
+
+Training set error measures:
+                   ME     RMSE      MAE       MPE    MAPE      MASE        ACF1
+Training set 2045.748 30223.32 22282.81 0.2027964 2.63774 0.4865482 -0.00631248</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/unnamed-chunk-13-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Series: treino 
+ARIMA(1,1,1)(1,1,1)[12] 
+
+Coefficients:
+         ar1      ma1    sar1     sma1
+      0.6463  -0.9003  0.0834  -0.9975
+s.e.  0.0744   0.0409  0.0738   0.2232
+
+sigma^2 = 726899456:  log likelihood = -2513.46
+AIC=5036.91   AICc=5037.2   BIC=5053.76
+
+Training set error measures:
+                    ME     RMSE      MAE        MPE     MAPE      MASE
+Training set -895.7818 25936.48 18829.75 -0.1492058 2.178924 0.4111503
+                    ACF1
+Training set -0.02809811</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/unnamed-chunk-14-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/unnamed-chunk-15-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section></section>
 <section class="title-slide slide level1 center">
 <h1>Análise de Intervenções</h1>
-
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "No AO detected"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              [,1]
+ind     196.000000
+lambda1  -4.809489</code></pre>
+</div>
+</div>
 </section>
 
 <section class="title-slide slide level1 center">

@@ -19,21 +19,20 @@ format:
 
 ## Sumário de aprendizagem
 
-::: {style="font-size: 70%;"}
+::: {style="font-size: 80%;"}
 -   Resumo Geral
 
      1. Motivo da Escolha da Série
 
      2. Apresentação da Série
 
-     3. Análises Primárias da série e Ajustes
 -   Estimação dos Modelos de Série Temporal
 
-     4. Método de Suavização Exponencial
+     3. Método de Suavização Exponencial
      
-     5. Metodologia Box-Jenkins
+     4. Metodologia Box-Jenkins
      
-     6. Análise de Intervenções
+     5. Análise de Intervenções
 -   Conclusão
     
     7. Conclusão das análises e modelos
@@ -67,17 +66,20 @@ format:
 
 Neste caso, vou me restringir a análisar apenas o consumo do Ceará na parte de consumo de energia elétrica na rede (MWh) de Sistema Simples.
 
-- É possivél entender melhor os dados e análises que o governo faz [neste link](https://www.epe.gov.br/pt/publicacoes-dados-abertos/publicacoes/consumo-de-energia-eletrica#:~:text=A%20EPE%20disponibiliza%20o%20arquivo%20com%20a%20s%C3%A9rie,e%20outros%20(rural,%20servi%C3%A7o%20p%C3%BAblico%20e%20ilumina%C3%A7%C3%A3o%20p%C3%BAblica).
+- É possivél entender melhor os dados e análises que o governo faz [neste link](https://encurtador.com.br/6qoRG).
 
 
 ## Apresentação da série:
 
+::: {style="font-size: 70%;"}
 A série começa em janeiro de 2004 e vai até março de 2025,com isso tem cerca de 255 observações,vamos olhar o **gráfico da série:**
 
+:::
 
-```{r}
+```{r , fig.align='center'}
 
-pacman::p_load(forecast, tseries, ggplot2, patchwork,gridExtra, urca, lubridate, FinTS, zoo,tibble,readxl,datawirzad,tidyverse,timetk)
+pacman::p_load(forecast, tseries, ggplot2, patchwork,gridExtra, urca, lubridate, FinTS, zoo,tibble,readxl,datawirzad,tidyverse,timetk,tseries,TSA,tsoutliers,)
+
 
 
 # 2. CARREGAMENTO E PREPARAÇÃO DOS DADOS
@@ -107,7 +109,7 @@ ggplot(ceara_data, aes(x = data, y = consumo_gwh)) +
 
 Fazendo o gráfico box-plot separados por mês,quadrimestre e ano.
 
-```{r}
+```{r, fig.align='center'}
 teste = ceara_data %>%  rename( date = data , value = consumo_gwh)
 
 
@@ -115,9 +117,8 @@ teste %>%  plot_seasonal_diagnostics(date, value, .interactive = FALSE)
 ```
 Percebemos um aumento nos últimos meses do ano e valores de outliers em alguns anos.
 
-# Análises Primárias da série e Ajustes
 
-## Análises Primárias da série e Ajustes:
+## Divisão da Série:
 
 **Fazendo a divisão da série em teste e treino**
 
@@ -138,12 +139,6 @@ treino <- window(ts_ceara, end = c(2022, 12))
 teste <- window(ts_ceara, start = c(2023, 1), end = c(2025, 3))
 ```
 
-
-
-## Análises Primárias da série e Ajustes:
-
-Podemos decompor a serie para ver a sazonalidade e estacionáridade,
-
 ```{r}
 # A série começa em Janeiro de 2004
 ts_ceara <- ts(ceara_data$consumo_gwh, start = c(2004, 1), frequency = 12)
@@ -151,51 +146,6 @@ ts_ceara <- ts(ceara_data$consumo_gwh, start = c(2004, 1), frequency = 12)
 treino <- window(ts_ceara, end = c(2022, 12))
 # 3. Criar o conjunto de TESTE usando a função window()
 teste <- window(ts_ceara, start = c(2023, 1), end = c(2025, 3))
-
-
-# Decomposição da série temporal usando STL (Seasonal and Trend decomposition using Loess)
-decomposicao <- stl(ts_ceara, s.window = "periodic")
-
-autoplot(decomposicao, colour = "#0072B2") +
-  
-  # 1. Adicionar títulos, subtítulos e legendas mais descritivas
-  labs(
-    title = "Decomposição STL da Série Temporal",
-    subtitle = "Componentes: Dados, Tendência, Sazonalidade e Resíduo",
-    x = "Ano",
-    y = ""  # Deixamos em branco para que os nomes dos painéis sirvam como rótulos
-  ) +
-  
-  # 2. Personalizar os elementos do tema do gráfico
-  theme_minimal() +
-  theme(
-    # Formatação do título principal
-    plot.title = element_text(hjust = 0.5, size = 16, face = "bold", color = "gray20"),
-    
-    # Formatação do subtítulo
-    plot.subtitle = element_text(hjust = 0.5, size = 12, color = "gray30"),
-    
-    # Formatação do título do eixo X
-    axis.title.x = element_text(size = 12, face = "italic"),
-    
-    # Formatação do texto dos painéis (Data, Trend, etc.)
-    strip.text = element_text(size = 11, face = "bold", color = "gray10"),
-    
-    # Ajustar as linhas de grade para um visual mais limpo
-    panel.grid.major = element_line(colour = "gray90"),
-    panel.grid.minor = element_blank(), # Remover linhas de grade menores
-    
-    # Adicionar um espaço entre os painéis para melhor separação
-    panel.spacing = unit(1.5, "lines") 
-  )
-```
-**Percebe-se um tendência práticamente linear cresente e uma série serrote, vamos olhar os lags para ver se tem tendência.**
-
-## Análises Primárias da série e Ajustes:
-
-Análisando os lags da série:
-
-```{r}
 
 # --- Função Aprimorada ---
 
@@ -258,37 +208,8 @@ gerar_diagnostico2_ts <- function(ts_object, titulo = "Painel de Diagnóstico da
 }
 
 
-gerar_diagnostico_ts(ts_ceara)
-```
-Temos um forte evidência do modelo ser um autoregressivo de ordem 1 ou 2 e que a parte de médias móveis precisa tem um tratamento para aparecer, mesmo que no limte um sazonalidade no lag 12 ~ 14.
 
 
-## Análises Primárias da série e Ajustes:
-
-Análisando os dados da Série da **primeira diferança**:
-
-```{r}
-
-ts_diff= diff(ts_ceara)
-
-gerar_diagnostico2_ts(ts_diff)
-
-#adf.test(ts_diff)
-
-```
-temos uma melhora da série e o teste do Dickey-Fuller deu que a série é estacionaria
-
-## Análises Primárias da série e Ajustes:
-
-Análisando os dados da Série da **primeira diferança normal e uma sazonal**:
-
-```{r}
-
-ts_diff_12 = diff(diff(ts_ceara),12)
-
-gerar_diagnostico2_ts(ts_diff_12 )
-
-#adf.test(ts_diff)
 
 ```
 
@@ -398,17 +319,19 @@ s_t &= 0{,}0001 \cdot \frac{y_t}{l_t} + (1 - 0{,}0001) \cdot s_{t-12}
 
 
 
-```{r}
+```{r ,fig.align='center'}
 gerar_diagnostico2_ts(modelo_ets$residuals) 
 ```
 
-* Modelo meio ajustado
+* Modelo quase ajustado
+
 * Captura tendência suavizada e sazonalidade proporcional fraca
+
 * Resíduos sem padrão aparente
 
 ## Método de Suavização Exponencial
 
-```{r}
+```{r, fig.align='center'}
 
 # Realizar a previsão para os próximos 27 meses 
 previsao_ets <- forecast(modelo_ets, h = 27)
@@ -430,7 +353,7 @@ autoplot(previsao_ets) +
 print(acuracia_ets)
 ```
 
-```{r}
+```{r ,fig.align='center'}
 # Obter as medidas de ajuste no conjunto de teste 
 acuracia_ets <- accuracy(previsao_ets, teste)
 print(acuracia_ets)
@@ -444,83 +367,295 @@ O modelo apresenta um desempenho ruim no conjunto de teste. Embora tenha se ajus
 
 
 # Metodologia Box-Jenkins
-     
+
+
+
+## Metodologia Box-Jenkins
+
+
+ Uma abordagem sistemática para análise e previsão de Séries Temporais
+
+
+
+ **Modelo Central: ARIMA(p, d, q)**
+
+O objetivo é encontrar o modelo que melhor se ajusta aos dados.
+
+* **AR (p): Autoregressivo**
+    * Dependência dos **valores passados** da própria série.
+* **I (d): Integrado**
+    * Número de **diferenciações** necessárias para tornar a série estacionária.
+* **MA (q): Média Móvel**
+    * Dependência dos **erros de previsão passados**.
+
+
+## Metodologia Box-Jenkins
+
+::: {style="font-size: 70%;"}
+ **Processo Iterativo em 4 Etapas**
+
+1.  **Identificação do Modelo**
+    * Verificar e ajustar a **estacionariedade** da série (usando diferenciação `d`).
+    * Analisar gráficos de **Autocorrelação (FAC)** e **Autocorrelação Parcial (FACP)** para sugerir as ordens `p` e `q`.
+
+2.  **Estimação dos Parâmetros**
+    * Calcular os coeficientes do modelo ARIMA(p, d, q) candidato.
+
+3.  **Verificação de Diagnóstico**
+    * Analisar os **resíduos** do modelo: eles devem se comportar como ruído branco (aleatórios e sem padrão).
+    * Se o modelo for inadequado, retorna-se à Etapa 1.
+
+4.  **Previsão**
+    * Com um modelo validado, utilizá-lo para prever valores futuros.
+
+
+
+**Pontos-Chave**
+
+* **Guiado pelos Dados:** A estrutura do modelo é definida pelos padrões encontrados nos próprios dados.
+* **Iterativo:** É um ciclo de identificação, ajuste e verificação.
+* **Objetivo:** Construir um modelo estatisticamente robusto para gerar previsões precisas.
+
+:::
+
+
+
+## Análises Primárias da série e Ajustes:
+
+Podemos decompor a serie para ver a sazonalidade e estacionáridade,
+
+```{r}
+# A série começa em Janeiro de 2004
+ts_ceara <- ts(ceara_data$consumo_gwh, start = c(2004, 1), frequency = 12)
+# 2. Criar o conjunto de TREINO usando a função window()
+treino <- window(ts_ceara, end = c(2022, 12))
+# 3. Criar o conjunto de TESTE usando a função window()
+teste <- window(ts_ceara, start = c(2023, 1), end = c(2025, 3))
+
+
+# Decomposição da série temporal usando STL (Seasonal and Trend decomposition using Loess)
+decomposicao <- stl(ts_ceara, s.window = "periodic")
+
+autoplot(decomposicao, colour = "#0072B2") +
+  
+  # 1. Adicionar títulos, subtítulos e legendas mais descritivas
+  labs(
+    title = "Decomposição STL da Série Temporal",
+    subtitle = "Componentes: Dados, Tendência, Sazonalidade e Resíduo",
+    x = "Ano",
+    y = ""  # Deixamos em branco para que os nomes dos painéis sirvam como rótulos
+  ) +
+  
+  # 2. Personalizar os elementos do tema do gráfico
+  theme_minimal() +
+  theme(
+    # Formatação do título principal
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold", color = "gray20"),
+    
+    # Formatação do subtítulo
+    plot.subtitle = element_text(hjust = 0.5, size = 12, color = "gray30"),
+    
+    # Formatação do título do eixo X
+    axis.title.x = element_text(size = 12, face = "italic"),
+    
+    # Formatação do texto dos painéis (Data, Trend, etc.)
+    strip.text = element_text(size = 11, face = "bold", color = "gray10"),
+    
+    # Ajustar as linhas de grade para um visual mais limpo
+    panel.grid.major = element_line(colour = "gray90"),
+    panel.grid.minor = element_blank(), # Remover linhas de grade menores
+    
+    # Adicionar um espaço entre os painéis para melhor separação
+    panel.spacing = unit(1.5, "lines") 
+  )
 ```
-# --- TÓPICO 4: METODOLOGIA DE BOX-JENKINS (ARIMA)  ---
+**Percebe-se um tendência práticamente linear cresente e uma série serrote, vamos olhar os lags para ver se tem tendência.**
 
-# 4.1. Análise de Estacionariedade no Treino [cite: 23]
-# Teste Augmented Dickey-Fuller (ADF)
-# H0: a série não é estacionária (possui raiz unitária)
-summary(ur.df(serie_treino, type = "trend", lags = 12)) # p-valor alto, não rejeita H0
 
-# Teste Kwiatkowski-Phillips-Schmidt-Shin (KPSS)
-# H0: a série é estacionária
-summary(ur.kpss(serie_treino, type = "tau")) # Estatística de teste > valor crítico, rejeita H0
-# Conclusão: a série não é estacionária.
+## Análises Primárias da série e Ajustes:
 
-# 4.2. Diferenciação para obter estacionariedade [cite: 23]
-# Aplicar uma diferença sazonal (d=1, D=1)
-serie_diff <- diff(diff(serie_treino, lag = 12), lag = 1)
+```
+adf.test(treino) 
+kpss.test(treino) 
 
-# Verificar estacionariedade da série diferenciada
-summary(ur.df(serie_diff, type = "drift", lags = 12)) # p-valor baixo, rejeita H0. OK!
-summary(ur.kpss(serie_diff, type = "mu")) # Estatística < valor crítico. OK!
-# Conclusão: a série diferenciada é estacionária.
+```
 
-# 4.3. Análise dos gráficos ACF e PACF 
-ggtsdisplay(serie_diff, main="ACF/PACF da Série Diferenciada (d=1, D=1)")
+```{r}
+adf.test(treino) 
+kpss.test(treino) 
 
-# 4.4. Estimação do Modelo 
+```
 
-# Modelo 1: Usando auto.arima() como baseline
-modelo_auto_arima <- auto.arima(serie_treino, stepwise = FALSE, approximation = FALSE)
-summary(modelo_auto_arima) # Sugeriu ARIMA(2,1,1)(0,1,1)[12]
+::: {style="font-size: 70%;"}
 
-# Diagnóstico do modelo auto.arima
-checkresiduals(modelo_auto_arima) # Ljung-Box p-value é baixo (0.01213), resíduos não são ruído branco.
+Com base nos resultados dos testes, a sua série temporal `treino` **não é estacionária**.
 
-# Modelo 2: Tentativa manual baseada no ACF/PACF e experimentação
-# O ACF/PACF sugere componentes sazonais mais complexos.
-# Vamos testar SARIMA(0,1,1)(2,1,1)[12]
-modelo_final_arima <- Arima(serie_treino, order=c(0,1,1), seasonal=c(2,1,1))
-summary(modelo_final_arima)
+Ambos os testes, apesar de terem hipóteses opostas, apontam para a mesma conclusão.
 
-# Diagnóstico do modelo final
-checkresiduals(modelo_final_arima) # Ljung-Box p-value = 0.1384. Resíduos são ruído branco!
-# Este é o nosso modelo final.
+***
 
-# 4.5. Previsão com o modelo final
-previsao_arima <- forecast(modelo_final_arima, h = 24)
+ **Teste Augmented Dickey-Fuller (ADF)**
 
-# Gráfico da previsão ARIMA vs. dados de teste
-autoplot(previsao_arima) +
-  autolayer(serie_teste, series="Dados Reais") +
-  labs(title='Gráfico 3: Previsão com SARIMA(0,1,1)(2,1,1)₁₂ vs. Dados de Teste',
+O teste ADF busca evidências de que a série *é estacionária*.
+
+* **Hipótese Nula ($H_0$)**: A série **não é estacionária** (possui raiz unitária).
+* **Seu resultado**: O p-valor foi de **0.09388**.
+
+Como o p-valor (0.09) é **maior** que o nível de significância padrão (0.05), você **falha em rejeitar** a hipótese nula. Isso significa que, segundo o teste ADF, a série é considerada **não estacionária**.
+
+***
+
+ **Teste KPSS**
+
+O teste KPSS, por outro lado, busca evidências de que a série *não é estacionária*.
+
+* **Hipótese Nula ($H_0$)**: A série **é estacionária**.
+* **Seu resultado**: O p-valor foi de **0.01**.
+
+Como o p-valor (0.01) é **menor** que o nível de significância (0.05), você **rejeita** a hipótese nula. Isso significa que o teste KPSS também conclui que a série é **não estacionária**.
+
+**Conclusão Final**
+
+Ambos os testes confirmam que a série `treino` **não é estacionária**. O próximo passo na modelagem ARIMA seria aplicar a **diferenciação** na série para tentar torná-la estacionária. 👍
+
+:::
+
+
+
+
+## Análises Primárias da série e Ajustes:
+
+Análisando os lags da série:
+
+```
+gerar_diagnostico_ts(ts_ceara)
+```
+
+```{r ,fig.align='center'}
+
+gerar_diagnostico_ts(ts_ceara)
+```
+Temos um forte evidência do modelo ser um autoregressivo de ordem 1 ou 2 e que a parte de médias móveis precisa tem um tratamento para aparecer, mesmo que no limte um sazonalidade no lag 12 ~ 14.
+
+
+## Análises Primárias da série e Ajustes:
+
+Análisando os dados da Série da **primeira diferança**:
+
+```
+ts_diff= diff(ts_ceara)
+gerar_diagnostico2_ts(ts_diff)
+adf.test(ts_diff)
+kpss.test(ts_diff)
+```
+
+
+```{r, fig.align='center'}
+
+ts_diff= diff(ts_ceara)
+gerar_diagnostico2_ts(ts_diff)
+#adf.test(ts_diff)
+#kpss.test(ts_diff)
+
+```
+::: {style="font-size: 60%;"}
+
+**Principais Observações**
+
+* **Estacionariedade:** A série se tornou estacionária após **1 diferenciação** (`d=1`).
+
+* **Sazonalidade Anual:** Padrão sazonal muito forte, com "spikes" significativos nos **lags 12 e 24** nos gráficos ACF e PACF.
+    * O spike claro no **PACF** no lag 12 sugere um componente **AR Sazonal (P=1)**.
+
+* **Componente Não-Sazonal:** O **PACF** corta abruptamente após o lag 1.
+    * Isso sugere um componente **AR(1) (p=1)**.
+
+
+**Modelo Proposto: $SARIMA(1, 1, 0)(1, 0, 0)^12$**
+
+| Componente | Ordem | Justificativa |
+| :--- | :---: | :--- |
+| **p** (AR Não-sazonal) | **1** | Corte no PACF no lag 1 |
+| **d** (Diferenciação) | **1** | Aplicada para obter estacionariedade |
+| **q** (MA Não-sazonal) | **0** | Ponto de partida simples |
+| **P** (AR Sazonal) | **1** | Spike significativo no PACF no lag 12 |
+| **D** (Dif. Sazonal) | **0** | Não parece necessária |
+| **Q** (MA Sazonal) | **0** | Ponto de partida simples |
+| **s** (Período Sazonal) | **12**| Padrão anual |
+
+temos uma melhora da série e os testes de Dickey-Fuller e KPSS deu que a série é estacionaria.
+
+:::
+
+
+## Análises Primárias da série e Ajustes:
+
+Análisando os dados da Série da **primeira diferança normal e uma sazonal**:
+
+
+```
+
+ts_diff_12 = diff(diff(ts_ceara),12)
+gerar_diagnostico2_ts(ts_diff_12 )
+adf.test(ts_diff_12)
+kpss.test(ts_diff_12)
+```
+
+```{r, fig.align='center'}
+
+ts_diff_12 = diff(diff(ts_ceara),12)
+
+gerar_diagnostico2_ts(ts_diff_12 )
+#adf.test(ts_diff_12)
+#kpss.test(ts_diff_12)
+
+```
+ Os testes de Dickey-Fuller e KPSS deu que a série é estacionaria.
+
+
+## modelos 
+
+```{r}
+Modelo1 <- Arima(treino, order = c(1, 1, 0), seasonal = c(1,0,0))
+
+summary(Modelo1)
+
+gerar_diagnostico2_ts(Modelo1$residuals) 
+
+```
+```{r}
+Modelo2 <- Arima(treino, order = c(1, 1, 1), seasonal = c(1,1,1))
+
+summary(Modelo2)
+
+gerar_diagnostico2_ts(Modelo2$residuals) 
+```
+
+
+```{r}
+# Ajuste o modelo ARIMA
+
+# Faça a previsão para os próximos 24 períodos (por exemplo, 2 anos)
+previsao_modelo2 <- forecast(Modelo2,27)
+# Gráfico da previsão vs. dados de teste 
+autoplot(previsao_modelo2) +
+  autolayer(teste, series="Dados Reais") +
+  labs(title='Gráfico 2: Previsão com ETS(M,Ad,M) vs. Dados de Teste', 
        x='Ano', y='Índice',
-       caption = 'Linha azul: Previsão ARIMA. Sombreado: Intervalos de Confiança.') +
+       caption = 'Linha azul: Previsão ETS. Sombreado: Intervalos de Confiança.') +
   theme_minimal()
 
-# Obter as medidas de ajuste no conjunto de teste
-acuracia_arima <- accuracy(previsao_arima, serie_teste)
-cat("\n--- Acurácia do Modelo ARIMA Final no Conjunto de Teste ---\n")
-print(acuracia_arima)
-
-
-# --- TÓPICO 5: COMPARAÇÃO DOS MODELOS  ---
-
-cat("\n\n--- Comparação Final dos Modelos (Métricas no Conjunto de Teste) ---\n")
-print("Modelo ETS(M,A,M):")
-print(acuracia_ets[2, c("RMSE", "MAE", "MAPE")]) # Linha 2 é do conjunto de teste
-print("Modelo SARIMA(0,1,1)(2,1,1)[12]:")
-print(acuracia_arima[2, c("RMSE", "MAE", "MAPE")])
 
 ```
-     
-
 
 # Análise de Intervenções
 
-    
+```{r}
+detectAO(Modelo2)
+detectIO(Modelo2)
+```
+
+
 # Conclusão das análises e modelos
 
 
