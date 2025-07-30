@@ -1,7 +1,7 @@
 ---
 title: "Análise da Série de Consumo de Energia Elétrica no Ceará"
 author: "Thalis Rebouças"
-subtitle: "CC0308 - 2025 | Julho 2025 <br><br> Slides:**thalisreboucas.github.io/Amostragem_Regressao_DuasFases/#/**"
+subtitle: "CC0308 - 2025 | Julho 2025 <br><br> Slides:**https://thalisreboucas.github.io/Analise-da-Serie-EPE-CE/#/**"
 format: 
   revealjs:
     logo: "images/logo.png"
@@ -9,7 +9,7 @@ format:
     height: 900
     self-contained: false
     incremental: false
-    footer: "Slides por Thalis Rebouças, feito em [Quarto](https://quarto.org/docs/presentations/revealjs/index.html). Código disponível [no GitHub](https://github.com/thalisreboucas/Amostragem_Regressao_DuasFases)."
+    footer: "Slides por Thalis Rebouças, feito em [Quarto](https://quarto.org/docs/presentations/revealjs/index.html). Código disponível [no GitHub](https://github.com/thalisreboucas/Analise-da-Serie-EPE-CE)."
     theme: ["custom.scss"]
     slide-number: c/t
     show-slide-number: all
@@ -19,6 +19,7 @@ format:
 
 ## Sumário de aprendizagem
 
+::: {style="font-size: 70%;"}
 -   Resumo Geral
 
      1. Motivo da Escolha da Série
@@ -39,7 +40,7 @@ format:
     
     8. Referências
 
-
+:::
 
 # Vamos lá!
 
