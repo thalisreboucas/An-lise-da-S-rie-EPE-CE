@@ -348,7 +348,7 @@ previsao_ets <- forecast(modelo_ets, h = 27)
 # Gráfico da previsão vs. dados de teste 
 autoplot(previsao_ets) +
   autolayer(teste, series="Dados Reais") +
-  labs(title='Gráfico 2: Previsão com ETS(M,Ad,M) vs. Dados de Teste', 
+  labs(title='Gráfico 1: Previsão com ETS(M,Ad,M) vs. Dados de Teste', 
        x='Ano', y='Índice',
        caption = 'Linha azul: Previsão ETS. Sombreado: Intervalos de Confiança.') +
   theme_minimal()
@@ -539,12 +539,12 @@ Ambos os testes confirmam que a série `treino` **não é estacionária**. O pr�
 Análisando os lags da série:
 
 ```
-gerar_diagnostico_ts(ts_ceara)
+gerar_diagnostico_ts(treino)
 ```
 
 ```{r ,fig.align='center'}
 
-gerar_diagnostico_ts(ts_ceara)
+gerar_diagnostico_ts(treino)
 ```
 Temos um forte evidência do modelo ser um autoregressivo de ordem 1 ou 2 e que a parte de médias móveis precisa tem um tratamento para aparecer, mesmo que no limte um sazonalidade no lag 12 ~ 14.
 
@@ -554,7 +554,7 @@ Temos um forte evidência do modelo ser um autoregressivo de ordem 1 ou 2 e que 
 Análisando os dados da Série da **primeira diferança**:
 
 ```
-ts_diff= diff(ts_ceara)
+ts_diff= diff(treino)
 gerar_diagnostico2_ts(ts_diff)
 adf.test(ts_diff)
 kpss.test(ts_diff)
@@ -563,7 +563,7 @@ kpss.test(ts_diff)
 
 ```{r, fig.align='center'}
 
-ts_diff= diff(ts_ceara)
+ts_diff= diff(treino)
 gerar_diagnostico2_ts(ts_diff)
 #adf.test(ts_diff)
 #kpss.test(ts_diff)
@@ -762,7 +762,7 @@ previsao_modelo2 <- forecast(Modelo2,27)
 # Gráfico da previsão vs. dados de teste 
 autoplot(previsao_modelo2) +
   autolayer(teste, series="Dados Reais") +
-  labs(title='Gráfico 2: Previsão com ETS(M,Ad,M) vs. Dados de Teste', 
+  labs(title='Gráfico 2: Previsão com Sarima(1,1,1)x(1,1,1)12  vs. Dados de Teste', 
        x='Ano', y='Índice',
        caption = 'Linha azul: Previsão ETS. Sombreado: Intervalos de Confiança.') +
   theme_minimal()
@@ -804,7 +804,7 @@ previsao_modelo2 <- forecast(Modelo3,27)
 # Gráfico da previsão vs. dados de teste 
 autoplot(previsao_modelo2) +
   autolayer(teste, series="Dados Reais") +
-  labs(title='Gráfico 2: Previsão com ETS(M,Ad,M) vs. Dados de Teste', 
+  labs(title='Gráfico 3: Previsão com Sarima(1,1,1)x(0,1,1)12  vs. Dados de Teste', 
        x='Ano', y='Índice',
        caption = 'Linha azul: Previsão ETS. Sombreado: Intervalos de Confiança.') +
   theme_minimal()
@@ -890,7 +890,7 @@ previsao_modelo3 <- forecast(Modelo3_com_outlier,27,xreg = xreg_futuro)
 # Gráfico da previsão vs. dados de teste 
 autoplot(previsao_modelo2) +
   autolayer(teste, series="Dados Reais") +
-  labs(title='Gráfico 2: Previsão com ETS(M,Ad,M) vs. Dados de Teste', 
+  labs(title='Gráfico 4: Previsão com Sarima(1,1,1)x(0,1,1)12 Reg vs. Dados de Teste', 
        x='Ano', y='Índice',
        caption = 'Linha azul: Previsão ETS. Sombreado: Intervalos de Confiança.') +
   theme_minimal()

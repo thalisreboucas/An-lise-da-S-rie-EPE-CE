@@ -490,14 +490,14 @@ KPSS Level = 4.4547, Truncation lag parameter = 4, p-value = 0.01</code></pre>
 <section class="slide level2">
 <h2>Análises Primárias da série e Ajustes:</h2>
 <p>Análisando os lags da série:</p>
-<pre><code>gerar_diagnostico_ts(ts_ceara)</code></pre>
+<pre><code>gerar_diagnostico_ts(treino)</code></pre>
 
 <img data-src="index_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><p>Temos um forte evidência do modelo ser um autoregressivo de ordem 1 ou 2 e que a parte de médias móveis precisa tem um tratamento para aparecer, mesmo que no limte um sazonalidade no lag 12 ~ 14.</p>
 </section>
 <section class="slide level2">
 <h2>Análises Primárias da série e Ajustes:</h2>
 <p>Análisando os dados da Série da <strong>primeira diferança</strong>:</p>
-<pre><code>ts_diff= diff(ts_ceara)
+<pre><code>ts_diff= diff(treino)
 gerar_diagnostico2_ts(ts_diff)
 adf.test(ts_diff)
 kpss.test(ts_diff)</code></pre>
