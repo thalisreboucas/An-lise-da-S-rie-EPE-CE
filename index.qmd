@@ -47,6 +47,10 @@ format:
 
 ## Motivo da  <br> Escolha da Série:
 
+**Qual série ?**
+
+$$Z_t = \text{Consumo Mensal de Energia Elétrica no Ceará (Sistema Simples) (2004-2025)}$$
+
 <!--# Descrito por hugo -->
 **Por que Análisar ?**
 
@@ -297,9 +301,13 @@ summary(modelo_ets)
 ## Método de Suavização Exponencial
 
 **Métricas de desempenho no conjunto de treino:**
+
 * RMSE: 26.608,53
+
 * MAE: 19.550,13
+
 * MAPE: 2,29% ⇒ Erro percentual muito baixo
+
 * ACF dos resíduos: 0,066 ⇒ Baixa autocorrelação
 
 
@@ -363,7 +371,7 @@ print(acuracia_ets)
 
 O modelo apresenta um desempenho ruim no conjunto de teste. Embora tenha se ajustado razoavelmente bem aos dados de treinamento, ele não conseguiu generalizar essa performance para os dados futuros (o conjunto de teste).
 
-
+O modelo está superajustado (overfit) e tem um desempenho de previsão muito ruim, sendo inferior a um método de benchmark simples.
 
 
 # Metodologia Box-Jenkins
@@ -424,7 +432,7 @@ O objetivo é encontrar o modelo que melhor se ajusta aos dados.
 
 Podemos decompor a serie para ver a sazonalidade e estacionáridade,
 
-```{r}
+```{r ,fig.align='center'}
 # A série começa em Janeiro de 2004
 ts_ceara <- ts(ceara_data$consumo_gwh, start = c(2004, 1), frequency = 12)
 # 2. Criar o conjunto de TREINO usando a função window()
@@ -558,7 +566,7 @@ gerar_diagnostico2_ts(ts_diff)
 #kpss.test(ts_diff)
 
 ```
-::: {style="font-size: 60%;"}
+## Análises Primárias da série e Ajustes:
 
 **Principais Observações**
 
@@ -571,21 +579,85 @@ gerar_diagnostico2_ts(ts_diff)
     * Isso sugere um componente **AR(1) (p=1)**.
 
 
-**Modelo Proposto: $SARIMA(1, 1, 0)(1, 0, 0)^12$**
+## Análises Primárias da série e Ajustes:
+
+::: {style="font-size: 60%;"}
+**Modelo Proposto Inicial: $SARIMA(1, 1, 1)(1, 0,0)^{12}$**
 
 | Componente | Ordem | Justificativa |
 | :--- | :---: | :--- |
 | **p** (AR Não-sazonal) | **1** | Corte no PACF no lag 1 |
 | **d** (Diferenciação) | **1** | Aplicada para obter estacionariedade |
-| **q** (MA Não-sazonal) | **0** | Ponto de partida simples |
+| **q** (MA Não-sazonal) | **1** | Ponto de partida simples |
 | **P** (AR Sazonal) | **1** | Spike significativo no PACF no lag 12 |
-| **D** (Dif. Sazonal) | **0** | Não parece necessária |
+| **D** (Dif. Sazonal) | **0** | Não parece necessária a primeira vista |
 | **Q** (MA Sazonal) | **0** | Ponto de partida simples |
 | **s** (Período Sazonal) | **12**| Padrão anual |
 
 temos uma melhora da série e os testes de Dickey-Fuller e KPSS deu que a série é estacionaria.
 
 :::
+
+
+ Os testes de Dickey-Fuller e KPSS deu que a série é estacionaria.
+
+
+## Sugestão Modelo 1
+::: {style="font-size: 60%;"}
+
+A fórmula é:
+
+$SARIMA(1, 1, 1)(1, 0, 0)_{12}$
+
+### Detalhamento dos Componentes
+
+* **SARIMA**: Sigla para *Seasonal AutoRegressive Integrated Moving Average*.
+* **(p, d, q) = (1, 0, 1)**: Esta é a parte **não sazonal** do modelo.
+    * `p=1`: Um termo autorregressivo (AR).
+    * `d=0`: Uma diferenciação regular para tornar a série estacionária.
+    * `q=1`: Nenhum termo de média móvel (MA).
+* **(P, D, Q)m = (1, 0, 0)m**: Esta é a parte **sazonal** do modelo.
+    * `P=1`: Um termo autorregressivo sazonal.
+    * `D=0`: Nenhuma diferenciação sazonal.
+    * `Q=0`: Nenhum termo de média móvel sazonal.
+    * `m`: Representa o período da sazonalidade (por exemplo, `m=12` para dados mensais).
+
+:::
+
+## Sugestão Modelo 1
+```
+Modelo1 <- Arima(treino, order = c(1, 1, 1), seasonal = c(1,0,0))
+
+summary(Modelo1)
+```
+
+```{r}
+Modelo1 <- Arima(treino, order = c(1, 1, 1), seasonal = c(1,0,0))
+
+summary(Modelo1)
+```
+## Sugestão Modelo 1
+
+Equação Proposta 1:
+$$(1 - \phi_1 B)(1 - \Phi_1 B^{12})(1-B) Y_t = (1 + \Theta_1 B) a_t$$
+
+Substiduindo os valores obtidos, temos: 
+
+$$
+(1 - 0,7196 B)(1 - 0,2938B^{12})(1-B)Y_t = (1 -0.8920 B) a_t
+$$
+
+## Diagnóstico Modelo 1
+
+```{r, fig.align='center'}
+gerar_diagnostico2_ts(Modelo1$residuals) 
+
+```
+
+Os gráficos indicam que os resíduos do modelo se comportam como ruído branco, sem autocorrelação, sugerindo um bom ajuste,mas que pode ser melhorado.
+
+
+## Sugestão de outro Modelo
 
 
 ## Análises Primárias da série e Ajustes:
@@ -610,29 +682,76 @@ gerar_diagnostico2_ts(ts_diff_12 )
 #kpss.test(ts_diff_12)
 
 ```
- Os testes de Dickey-Fuller e KPSS deu que a série é estacionaria.
 
 
-## modelos 
 
-```{r}
-Modelo1 <- Arima(treino, order = c(1, 1, 0), seasonal = c(1,0,0))
+## Sugestão Modelo 2
 
-summary(Modelo1)
+::: {style="font-size: 60%;"}
 
-gerar_diagnostico2_ts(Modelo1$residuals) 
+A fórmula é:
+
+$SARIMA(1, 1, 1)(1, 1, 1)_{12}$
+
+### Detalhamento dos Componentes
+
+* **SARIMA**: Sigla para *Seasonal AutoRegressive Integrated Moving Average*.
+* **(p, d, q) = (1, 0, 1)**: Esta é a parte **não sazonal** do modelo.
+    * `p=1`: Um termo autorregressivo (AR).
+    * `d=1`: Uma diferenciação regular para tornar a série estacionária.
+    * `q=1`: Uma termo de média móvel (MA).
+* **(P, D, Q)m = (1, 0, 0)m**: Esta é a parte **sazonal** do modelo.
+    * `P=1`: Um termo autorregressivo sazonal.
+    * `D=1`: Um diferenciação sazonal.
+    * `Q=1`: Um termo de média móvel sazonal.
+    * `m`: Representa o período da sazonalidade (por exemplo, `m=12` para dados mensais).
+
+:::
+$$
+(1 - \phi_1 B)(1 - \Phi_1 B^{12})(1-B)(1-B^{12}) Y_t = (1 + \theta_1 B)(1 + \Theta_1 B^{12}) a_t
+$$
+
+## Sugestão Modelo 2
 
 ```
+Modelo2 <- Arima(treino, order = c(1, 1, 1), seasonal = c(1,1,1))
+
+summary(Modelo2)
+```
+
+
 ```{r}
 Modelo2 <- Arima(treino, order = c(1, 1, 1), seasonal = c(1,1,1))
 
 summary(Modelo2)
+```
+::: {style="font-size: 60%;"}
+O modelo SARIMA(1,1,1)(1,1,1)[12] apresenta um excelente ajuste aos dados de treinamento, com resíduos que se comportam como ruído branco. No entanto, o modelo é ligeiramente mais complexo do que o necessário, pois um de seus coeficientes não é estatisticamente significativo, sugerindo que uma versão simplificada seria mais adequada (parcimoniosa)
+:::
 
+## Sugestão Modelo 2
+
+```{r, fig.align='center'}
 gerar_diagnostico2_ts(Modelo2$residuals) 
 ```
+::: {style="font-size: 60%;"}
+Gráfico da Série: Os resíduos flutuam aleatoriamente em torno de zero, sem qualquer tendência ou padrão visível.
+
+ACF e PACF: Os gráficos de autocorrelação e autocorrelação parcial mostram que praticamente todos os lags estão dentro dos limites de significância (linhas azuis). Isso indica que não há autocorrelação remanescente, um forte sinal de que os resíduos se comportam como ruído branco.
+:::
+
+## Sugestão Modelo 2
+
+Assim esse é o Modelo sugerido ideal ao meu ver,
+$$(1 - 0.6463 B)(1 - 0.0834 B^{12})(1-B)(1-B^{12}) Y_t = $$
+$$(1 - 0.9003 B)(1 - 0.9975 B^{12}) a_t$$
 
 
-```{r}
+
+## Sugestão Modelo 2
+
+
+```{r, fig.align='center'}
 # Ajuste o modelo ARIMA
 
 # Faça a previsão para os próximos 24 períodos (por exemplo, 2 anos)
@@ -647,13 +766,76 @@ autoplot(previsao_modelo2) +
 
 
 ```
+# Modelo Final 
+
+## Sugestão Modelo Final
+
+o Ajuste para um modelo final foi removido o termo não significativo sar1. O novo candidato, que deve ser o modelo final
+é o SARIMA(1,1,1)(0,1,1)[12]
+
+```{r}
+Modelo3 <- Arima(treino, order = c(1, 1, 1), seasonal = c(0,1,1))
+
+summary(Modelo2)
+```
+## Sugestão Modelo Final
+
+```{r}
+gerar_diagnostico2_ts(Modelo3$residuals) 
+```
+## Sugestão Modelo Final
+
+Este modelo SARIMA(1,1,1)(0,1,1)[12] é a versão otimizada e final. Ele é mais simples, todos os seus componentes são significativos, e ele se ajusta melhor aos dados segundo os critérios de informação. O próximo passo é usar este modelo para fazer previsões e avaliar seu desempenho no conjunto de teste.
+
+$$
+(1 - 0.6370 B)(1-B)(1-B^{12}) Y_t = (1 - 0.8923 B)(1 - 0.9166 B^{12}) a_t
+$$
+
+
+## Previsão Modelo final
+```{r, fig.align='center'}
+# Ajuste o modelo ARIMA
+
+# Faça a previsão para os próximos 24 períodos (por exemplo, 2 anos)
+previsao_modelo2 <- forecast(Modelo3,27)
+# Gráfico da previsão vs. dados de teste 
+autoplot(previsao_modelo2) +
+  autolayer(teste, series="Dados Reais") +
+  labs(title='Gráfico 2: Previsão com ETS(M,Ad,M) vs. Dados de Teste', 
+       x='Ano', y='Índice',
+       caption = 'Linha azul: Previsão ETS. Sombreado: Intervalos de Confiança.') +
+  theme_minimal()
+
+
+```
+
+
 
 # Análise de Intervenções
 
-```{r}
-detectAO(Modelo2)
-detectIO(Modelo2)
 ```
+detectAO(Modelo3)
+detectIO(Modelo3)
+```
+
+```{r}
+detectAO(Modelo3)
+detectIO(Modelo3)
+```
+::: {style="font-size: 60%;"}
+Este resultado indica que o algoritmo de detecção de outliers encontrou um evento estatisticamente significativo na sua série temporal.
+
+* **Evento Detectado:** Um outlier significativo foi identificado no **ponto de índice 196** da série .
+
+* **Tipo de Outlier:** A mensagem `"No AO detected"` informa que não foram encontrados Outliers Aditivos (pontos isolados atípicos). Portanto, o outlier encontrado no índice 196 é de outro tipo, muito provavelmente uma **Mudança de Nível (Level Shift - LS)**.
+
+* **Significância e Impacto:** O valor `lambda1` (`-4.84`) é a estatística-t do evento. Por ser um valor alto (em módulo), o outlier é **altamente significativo**. O sinal negativo indica que houve uma **queda abrupta e permanente** no nível médio da série a partir do ponto 196.
+
+**Em resumo:** a análise sugere que algo mudou estruturalmente na série no 196º período que é maio de 2020, causando uma queda em seu patamar. Isso deve ser incorporado ao modelo final para melhorar a precisão das previsões.
+:::
+
+# Análise de Intervenções
+
 ```{r}
 # Primeiro, pegamos o tamanho do seu conjunto de treino
 n_treino <- length(treino)
@@ -673,14 +855,28 @@ library(forecast)
 
 # Ajuste o modelo SARIMA incluindo o regressor do outlier
 # Use a função Arima() do pacote forecast, que lida melhor com xreg
-Modelo2_com_outlier <- Arima(treino, 
+Modelo3_com_outlier <- Arima(treino, 
                              order = c(1, 1, 1), 
-                             seasonal = list(order = c(1, 1, 1), period = 12),
-                             xreg = outlier_ao_196) # <-- AQUI ESTÁ A MÁGICA
+                             seasonal = list(order = c(0, 1, 1), period = 12),
+                             xreg = outlier_ao_196) 
 
 # Veja o resumo do novo modelo
-summary(Modelo2_com_outlier)
+summary(Modelo3_com_outlier)
 ```
+
+::: {style="font-size: 50%;"}
+O modelo combina uma regressão linear com um modelo **SARIMA `(1,1,1)(0,1,1)[12]`** para capturar a dinâmica dos erros, o que é uma abordagem poderosa.
+
+* **Coeficientes Significativos:** Todos os coeficientes, incluindo o da variável externa (`xreg`), são estatisticamente significativos. Isso indica que a variável `xreg` contribui de forma importante para a previsão.
+* **Boa Acurácia:** O erro percentual absoluto médio (**MAPE**) de **2.22%** é geralmente considerado um bom nível de precisão.
+* **Resíduos Limpos:** O valor de **ACF1** (-0.02) é muito próximo de zero, sugerindo que não há autocorrelação remanescente nos resíduos. Isso é um forte indicativo de que a estrutura do modelo capturou bem os padrões dos dados.
+
+::: 
+
+# Análise de Intervenções
+
+Fazendo agora o Gráfico de Previsão com a Interveção colocada
+
 ```{r}
 # Ajuste o modelo ARIMA
 # Defina o horizonte de previsão (ex: 24 meses)
@@ -690,7 +886,7 @@ h_previsao <- 27
 # ele será um vetor de zeros.
 xreg_futuro <- rep(0, h_previsao)
 # Faça a previsão para os próximos 24 períodos (por exemplo, 2 anos)
-previsao_modelo2 <- forecast(Modelo2_com_outlier,27,xreg = xreg_futuro)
+previsao_modelo3 <- forecast(Modelo3_com_outlier,27,xreg = xreg_futuro)
 # Gráfico da previsão vs. dados de teste 
 autoplot(previsao_modelo2) +
   autolayer(teste, series="Dados Reais") +
@@ -700,9 +896,102 @@ autoplot(previsao_modelo2) +
   theme_minimal()
 ```
 
+## Modelo Final 
+
+
+::: {style="font-size: 60%;"}
+
+| Componente | Termo na Equação | Valor/Parâmetro Estimado | Descrição |
+| :--- | :--- | :--- | :--- |
+| **Autorregressivo (AR)** | `(1 - 0.6219 B)` | `φ₁ = 0.6219` | Modela a dependência do valor atual com o do período anterior (memória de curto prazo). |
+| **Média Móvel (MA)** | `(1 - 0.8848 B)` | `θ₁ = -0.8848` | Modela a dependência do valor atual com o erro de previsão do período anterior. |
+| **Média Móvel Sazonal**| `(1 - 0.9295 B¹²)`| `Θ₁ = -0.9295`| Modela a dependência com o erro de previsão do mesmo mês no ano anterior. |
+| **Diferenciação** | `(1 - B)(1 - B¹²)` | N/A (Operadores) | Remove a tendência e a sazonalidade para tornar a série estacionária. |
+| **Efeito da Intervenção**| `-64822.33 * ... * P_t`| `ω = -64822.33`| O impacto imediato do evento, causando uma queda de ~64.8k unidades. |
+| **Erro Aleatório** | `a_t` | N/A (Variável) | Flutuações imprevisíveis restantes após a modelagem dos outros componentes. |
+:::
+
+## Modelo Final 
+Esta é a equação do modelo final com intervenção, com os valores estimados a partir dos dados.
+
+O coeficiente **-64822.33** (`ω`) representa o **impacto imediato e pontual** do evento de intervenção (no tempo $T$). Isso significa que, no momento em que ocorreu, o evento causou uma **queda estimada de aproximadamente 64.822 unidades** no nível da série.
+
+Os outros coeficientes (`ar1=0.6219`, `ma1=-0.8848`, `sma1=-0.9295`) definem a "memória" da série, ou seja, como o efeito desse choque inicial e de outras flutuações aleatórias se dissipam e se propagam ao longo dos meses seguintes.
 
 
 # Conclusão das análises e modelos
+
+
+## Conclusão das análises e modelos
+
+::: {style="font-size: 60%;"}
+
+Avaliamos quatro modelos de duas famílias principais: **ARIMA** e **ETS**.
+
+1.  **Regressão com Erros ARIMA (Dinâmico)**
+    * `Regression with ARIMA(1,1,1)(0,1,1)[12] errors`
+    * Inclui uma variável externa (`xreg`) para melhorar a previsão.
+
+2.  **ARIMA Sazonal (SARIMA)**
+    * `ARIMA(1,1,1)(0,1,1)[12]`
+
+3.  **ARIMA Sazonal (Alternativo)**
+    * `ARIMA(1,1,1)(1,0,0)[12]`
+
+4.  **ETS (Suavização Exponencial)**
+    * `ETS(M,Ad,M)` - (Erro Multiplicativo, Tendência Aditiva Amortecida, Sazonalidade Multiplicativa)
+
+## Conclusão das análises e modelos
+
+### **Qualidade do Ajuste vs. Complexidade**
+* **AIC, AICc, BIC:** Penalizam modelos complexos para evitar sobreajuste.
+* ***Quanto menor, melhor.***
+
+#### **Acurácia da Previsão (no treino)**
+* **RMSE, MAE, MAPE:** Medem o erro médio das previsões.
+* ***Quanto menor, melhor.***
+
+:::
+
+##  Resultados: Qualidade do Ajuste 
+
+Comparamos os critérios de informação. Valores mais baixos indicam um melhor equilíbrio entre o ajuste do modelo e sua simplicidade.
+
+| Modelo | AIC | BIC |
+| :--- | :--- | :--- |
+| **Reg-ARIMA** 🏆 | **5029.19** | **5046.04** |
+| ARIMA (0,1,1)[12] | 5035.95 | 5049.43 |
+| ARIMA (1,0,0)[12] | 5326.89 | 5340.59 |
+| ETS(M,Ad,M) | 5878.42 | 5940.15 |
+
+**Conclusão:** O modelo **Regressão com Erros ARIMA** se mostra superior, sugerindo que a variável externa (`xreg`) adiciona valor real.
+
+##  Resultados: Acurácia da Previsão 
+
+Analisamos os erros de previsão no conjunto de dados de treino.
+
+| Modelo | RMSE | MAE | MAPE (%) |
+| :--- | :--- | :--- | :--- |
+| **Reg-ARIMA** 🏆 | **26064.73** | **19178.95** | **2.22%** |
+| ARIMA (0,1,1)[12] | 26697.04 | 19381.64 | 2.24% |
+| ARIMA (1,0,0)[12] | 29490.90 | 22057.06 | 2.61% |
+| ETS(M,Ad,M) | 26608.53 | 19550.13 | 2.29% |
+
+**Conclusão:** O **Reg-ARIMA** consistentemente produz os menores erros, confirmando sua maior precisão.
+
+---
+
+##  O Veredito: O Modelo Vencedor 
+
+O modelo **Regressão com Erros ARIMA(1,1,1)(0,1,1)[12]** é a escolha recomendada.
+
+### Por que ele venceu?
+
+* ✅ **Menores Critérios de Informação (AIC & BIC):** Melhor equilíbrio entre ajuste e complexidade.
+* ✅ **Menores Erros de Previsão (RMSE & MAE):** Previsões mais acuradas.
+* ✅ **Poder Explicativo Adicional:** A variável externa `xreg` é estatisticamente significativa e melhora o desempenho do modelo em relação a um ARIMA puro.
+
+
 
 
 # Referências Teóricas
@@ -718,12 +1007,3 @@ autoplot(previsao_modelo2) +
 - Shumway, R. H., & Stoffer, D. S., *Time Series Analysis and Its Applications: With R Examples* (Springer Texts in Statistics), 4th Edition.
 
 # Obrigado !! 
-
-## Frase Final:
-
-
-
-
-“Não podemos prever o futuro, mas podemos criá-lo.”
-
-Peter Drucker

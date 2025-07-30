@@ -174,6 +174,8 @@ Thalis Rebouças
 </section>
 <section class="slide level2">
 <h2>Motivo da <br> Escolha da Série:</h2>
+<p><strong>Qual série ?</strong></p>
+<p><span class="math display">\[Z_t = \text{Consumo Mensal de Energia Elétrica no Ceará (Sistema Simples) (2004-2025)}\]</span></p>
 <!--# Descrito por hugo -->
 <p><strong>Por que Análisar ?</strong></p>
 <ul>
@@ -319,7 +321,13 @@ s_t &amp;= \gamma \cdot \frac{y_t}{l_t} + (1 - \gamma) \cdot s_{t-m}
 </section>
 <section class="slide level2">
 <h2>Método de Suavização Exponencial</h2>
-<p><strong>Métricas de desempenho no conjunto de treino:</strong> * RMSE: 26.608,53 * MAE: 19.550,13 * MAPE: 2,29% ⇒ Erro percentual muito baixo * ACF dos resíduos: 0,066 ⇒ Baixa autocorrelação</p>
+<p><strong>Métricas de desempenho no conjunto de treino:</strong></p>
+<ul>
+<li><p>RMSE: 26.608,53</p></li>
+<li><p>MAE: 19.550,13</p></li>
+<li><p>MAPE: 2,29% ⇒ Erro percentual muito baixo</p></li>
+<li><p>ACF dos resíduos: 0,066 ⇒ Baixa autocorrelação</p></li>
+</ul>
 </section>
 <section class="slide level2">
 <h2>Método de Suavização Exponencial</h2>
@@ -363,6 +371,7 @@ Test set     0.25875513  1.389201</code></pre>
 </div>
 </div>
 <p>O modelo apresenta um desempenho ruim no conjunto de teste. Embora tenha se ajustado razoavelmente bem aos dados de treinamento, ele não conseguiu generalizar essa performance para os dados futuros (o conjunto de teste).</p>
+<p>O modelo está superajustado (overfit) e tem um desempenho de previsão muito ruim, sendo inferior a um método de benchmark simples.</p>
 </section></section>
 <section>
 <section class="title-slide slide level1 center">
@@ -425,7 +434,7 @@ Test set     0.25875513  1.389201</code></pre>
 <h2>Análises Primárias da série e Ajustes:</h2>
 <p>Podemos decompor a serie para ver a sazonalidade e estacionáridade,</p>
 
-<img data-src="index_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch"><p><strong>Percebe-se um tendência práticamente linear cresente e uma série serrote, vamos olhar os lags para ver se tem tendência.</strong></p>
+<img data-src="index_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><p><strong>Percebe-se um tendência práticamente linear cresente e uma série serrote, vamos olhar os lags para ver se tem tendência.</strong></p>
 </section>
 <section class="slide level2">
 <h2>Análises Primárias da série e Ajustes:</h2>
@@ -487,7 +496,9 @@ gerar_diagnostico2_ts(ts_diff)
 adf.test(ts_diff)
 kpss.test(ts_diff)</code></pre>
 
-<img data-src="index_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><div style="font-size: 60%;">
+<img data-src="index_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<section class="slide level2">
+<h2>Análises Primárias da série e Ajustes:</h2>
 <p><strong>Principais Observações</strong></p>
 <ul>
 <li><p><strong>Estacionariedade:</strong> A série se tornou estacionária após <strong>1 diferenciação</strong> (<code>d=1</code>).</p></li>
@@ -500,8 +511,17 @@ kpss.test(ts_diff)</code></pre>
 <li>Isso sugere um componente <strong>AR(1) (p=1)</strong>.</li>
 </ul></li>
 </ul>
-<p><strong>Modelo Proposto: <span class="math inline">\(SARIMA(1, 1, 0)(1, 0, 0)^12\)</span></strong></p>
+</section>
+<section class="slide level2">
+<h2>Análises Primárias da série e Ajustes:</h2>
+<div style="font-size: 60%;">
+<p><strong>Modelo Proposto Inicial: <span class="math inline">\(SARIMA(1, 1, 1)(1, 0,0)^{12}\)</span></strong></p>
 <table class="caption-top">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 38%">
+<col style="width: 30%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Componente</th>
@@ -522,7 +542,7 @@ kpss.test(ts_diff)</code></pre>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><strong>q</strong> (MA Não-sazonal)</td>
-<td style="text-align: center;"><strong>0</strong></td>
+<td style="text-align: center;"><strong>1</strong></td>
 <td style="text-align: left;">Ponto de partida simples</td>
 </tr>
 <tr class="even">
@@ -533,7 +553,7 @@ kpss.test(ts_diff)</code></pre>
 <tr class="odd">
 <td style="text-align: left;"><strong>D</strong> (Dif. Sazonal)</td>
 <td style="text-align: center;"><strong>0</strong></td>
-<td style="text-align: left;">Não parece necessária</td>
+<td style="text-align: left;">Não parece necessária a primeira vista</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><strong>Q</strong> (MA Sazonal)</td>
@@ -549,6 +569,71 @@ kpss.test(ts_diff)</code></pre>
 </table>
 <p>temos uma melhora da série e os testes de Dickey-Fuller e KPSS deu que a série é estacionaria.</p>
 </div>
+<p>Os testes de Dickey-Fuller e KPSS deu que a série é estacionaria.</p>
+</section>
+<section class="slide level2">
+<h2>Sugestão Modelo 1</h2>
+<div style="font-size: 60%;">
+<p>A fórmula é:</p>
+<p><span class="math inline">\(SARIMA(1, 1, 1)(1, 0, 0)_{12}\)</span></p>
+<h3>Detalhamento dos Componentes</h3>
+<ul>
+<li><strong>SARIMA</strong>: Sigla para <em>Seasonal AutoRegressive Integrated Moving Average</em>.</li>
+<li><strong>(p, d, q) = (1, 0, 1)</strong>: Esta é a parte <strong>não sazonal</strong> do modelo.
+<ul>
+<li><code>p=1</code>: Um termo autorregressivo (AR).</li>
+<li><code>d=0</code>: Uma diferenciação regular para tornar a série estacionária.</li>
+<li><code>q=1</code>: Nenhum termo de média móvel (MA).</li>
+</ul></li>
+<li><strong>(P, D, Q)m = (1, 0, 0)m</strong>: Esta é a parte <strong>sazonal</strong> do modelo.
+<ul>
+<li><code>P=1</code>: Um termo autorregressivo sazonal.</li>
+<li><code>D=0</code>: Nenhuma diferenciação sazonal.</li>
+<li><code>Q=0</code>: Nenhum termo de média móvel sazonal.</li>
+<li><code>m</code>: Representa o período da sazonalidade (por exemplo, <code>m=12</code> para dados mensais).</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+<h2>Sugestão Modelo 1</h2>
+<pre><code>Modelo1 &lt;- Arima(treino, order = c(1, 1, 1), seasonal = c(1,0,0))
+
+summary(Modelo1)</code></pre>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Series: treino 
+ARIMA(1,1,1)(1,0,0)[12] 
+
+Coefficients:
+         ar1      ma1    sar1
+      0.7196  -0.8920  0.2938
+s.e.  0.0688   0.0378  0.0687
+
+sigma^2 = 885243577:  log likelihood = -2659.45
+AIC=5326.89   AICc=5327.07   BIC=5340.59
+
+Training set error measures:
+                   ME    RMSE      MAE       MPE     MAPE      MASE        ACF1
+Training set 4622.065 29490.9 22057.06 0.5171221 2.607869 0.4816191 -0.01643013</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+<h2>Sugestão Modelo 1</h2>
+<p>Equação Proposta 1: <span class="math display">\[(1 - \phi_1 B)(1 - \Phi_1 B^{12})(1-B) Y_t = (1 + \Theta_1 B) a_t\]</span></p>
+<p>Substiduindo os valores obtidos, temos:</p>
+<p><span class="math display">\[
+(1 - 0,7196 B)(1 - 0,2938B^{12})(1-B)Y_t = (1 -0.8920 B) a_t
+\]</span></p>
+</section>
+<section class="slide level2">
+<h2>Diagnóstico Modelo 1</h2>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><p>Os gráficos indicam que os resíduos do modelo se comportam como ruído branco, sem autocorrelação, sugerindo um bom ajuste,mas que pode ser melhorado.</p>
+</section>
+<section class="slide level2">
+<h2>Sugestão de outro Modelo</h2>
 </section>
 <section class="slide level2">
 <h2>Análises Primárias da série e Ajustes:</h2>
@@ -559,35 +644,39 @@ gerar_diagnostico2_ts(ts_diff_12 )
 adf.test(ts_diff_12)
 kpss.test(ts_diff_12)</code></pre>
 
-<img data-src="index_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><p>Os testes de Dickey-Fuller e KPSS deu que a série é estacionaria.</p>
+<img data-src="index_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<section class="slide level2">
+<h2>Sugestão Modelo 2</h2>
+<div style="font-size: 60%;">
+<p>A fórmula é:</p>
+<p><span class="math inline">\(SARIMA(1, 1, 1)(1, 1, 1)_{12}\)</span></p>
+<h3>Detalhamento dos Componentes</h3>
+<ul>
+<li><strong>SARIMA</strong>: Sigla para <em>Seasonal AutoRegressive Integrated Moving Average</em>.</li>
+<li><strong>(p, d, q) = (1, 0, 1)</strong>: Esta é a parte <strong>não sazonal</strong> do modelo.
+<ul>
+<li><code>p=1</code>: Um termo autorregressivo (AR).</li>
+<li><code>d=1</code>: Uma diferenciação regular para tornar a série estacionária.</li>
+<li><code>q=1</code>: Uma termo de média móvel (MA).</li>
+</ul></li>
+<li><strong>(P, D, Q)m = (1, 0, 0)m</strong>: Esta é a parte <strong>sazonal</strong> do modelo.
+<ul>
+<li><code>P=1</code>: Um termo autorregressivo sazonal.</li>
+<li><code>D=1</code>: Um diferenciação sazonal.</li>
+<li><code>Q=1</code>: Um termo de média móvel sazonal.</li>
+<li><code>m</code>: Representa o período da sazonalidade (por exemplo, <code>m=12</code> para dados mensais).</li>
+</ul></li>
+</ul>
+</div>
+<p><span class="math display">\[
+(1 - \phi_1 B)(1 - \Phi_1 B^{12})(1-B)(1-B^{12}) Y_t = (1 + \theta_1 B)(1 + \Theta_1 B^{12}) a_t
+\]</span></p>
 </section>
 <section class="slide level2">
-<h2>modelos</h2>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>Series: treino 
-ARIMA(1,1,0)(1,0,0)[12] 
+<h2>Sugestão Modelo 2</h2>
+<pre><code>Modelo2 &lt;- Arima(treino, order = c(1, 1, 1), seasonal = c(1,1,1))
 
-Coefficients:
-          ar1    sar1
-      -0.1036  0.2753
-s.e.   0.0702  0.0701
-
-sigma^2 = 925628163:  log likelihood = -2664.89
-AIC=5335.78   AICc=5335.89   BIC=5346.06
-
-Training set error measures:
-                   ME     RMSE      MAE       MPE    MAPE      MASE        ACF1
-Training set 2045.748 30223.32 22282.81 0.2027964 2.63774 0.4865482 -0.00631248</code></pre>
-</div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="index_files/figure-revealjs/unnamed-chunk-13-1.png" width="960"></p>
-</figure>
-</div>
-</div>
-</div>
+summary(Modelo2)</code></pre>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>Series: treino 
@@ -607,26 +696,75 @@ Training set -895.7818 25936.48 18829.75 -0.1492058 2.178924 0.4111503
                     ACF1
 Training set -0.02809811</code></pre>
 </div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="index_files/figure-revealjs/unnamed-chunk-14-1.png" width="960"></p>
-</figure>
 </div>
+<div style="font-size: 60%;">
+<p>O modelo SARIMA(1,1,1)(1,1,1)[12] apresenta um excelente ajuste aos dados de treinamento, com resíduos que se comportam como ruído branco. No entanto, o modelo é ligeiramente mais complexo do que o necessário, pois um de seus coeficientes não é estatisticamente significativo, sugerindo que uma versão simplificada seria mais adequada (parcimoniosa)</p>
 </div>
+</section>
+<section class="slide level2">
+<h2>Sugestão Modelo 2</h2>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><div style="font-size: 60%;">
+<p>Gráfico da Série: Os resíduos flutuam aleatoriamente em torno de zero, sem qualquer tendência ou padrão visível.</p>
+<p>ACF e PACF: Os gráficos de autocorrelação e autocorrelação parcial mostram que praticamente todos os lags estão dentro dos limites de significância (linhas azuis). Isso indica que não há autocorrelação remanescente, um forte sinal de que os resíduos se comportam como ruído branco.</p>
 </div>
+</section>
+<section class="slide level2">
+<h2>Sugestão Modelo 2</h2>
+<p>Assim esse é o Modelo sugerido ideal ao meu ver, <span class="math display">\[(1 - 0.6463 B)(1 - 0.0834 B^{12})(1-B)(1-B^{12}) Y_t = \]</span> <span class="math display">\[(1 - 0.9003 B)(1 - 0.9975 B^{12}) a_t\]</span></p>
+</section>
+<section class="slide level2">
+<h2>Sugestão Modelo 2</h2>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section></section>
+<section>
+<section class="title-slide slide level1 center">
+<h1>Modelo Final</h1>
+
+</section>
+<section class="slide level2">
+<h2>Sugestão Modelo Final</h2>
+<p>o Ajuste para um modelo final foi removido o termo não significativo sar1. O novo candidato, que deve ser o modelo final é o SARIMA(1,1,1)(0,1,1)[12]</p>
 <div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="index_files/figure-revealjs/unnamed-chunk-15-1.png" width="960"></p>
-</figure>
+<div class="cell-output cell-output-stdout">
+<pre><code>Series: treino 
+ARIMA(1,1,1)(1,1,1)[12] 
+
+Coefficients:
+         ar1      ma1    sar1     sma1
+      0.6463  -0.9003  0.0834  -0.9975
+s.e.  0.0744   0.0409  0.0738   0.2232
+
+sigma^2 = 726899456:  log likelihood = -2513.46
+AIC=5036.91   AICc=5037.2   BIC=5053.76
+
+Training set error measures:
+                    ME     RMSE      MAE        MPE     MAPE      MASE
+Training set -895.7818 25936.48 18829.75 -0.1492058 2.178924 0.4111503
+                    ACF1
+Training set -0.02809811</code></pre>
 </div>
 </div>
-</div>
-</section></section>
+</section>
+<section class="slide level2">
+<h2>Sugestão Modelo Final</h2>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-19-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+<h2>Sugestão Modelo Final</h2>
+<p>Este modelo SARIMA(1,1,1)(0,1,1)[12] é a versão otimizada e final. Ele é mais simples, todos os seus componentes são significativos, e ele se ajusta melhor aos dados segundo os critérios de informação. O próximo passo é usar este modelo para fazer previsões e avaliar seu desempenho no conjunto de teste.</p>
+<p><span class="math display">\[
+(1 - 0.6370 B)(1-B)(1-B^{12}) Y_t = (1 - 0.8923 B)(1 - 0.9166 B^{12}) a_t
+\]</span></p>
+</section>
+<section class="slide level2">
+<h2>Previsão Modelo final</h2>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-20-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section></section>
 <section class="title-slide slide level1 center">
 <h1>Análise de Intervenções</h1>
+<pre><code>detectAO(Modelo3)
+detectIO(Modelo3)</code></pre>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "No AO detected"</code></pre>
@@ -634,37 +772,253 @@ Training set -0.02809811</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>              [,1]
 ind     196.000000
-lambda1  -4.809489</code></pre>
+lambda1  -4.841556</code></pre>
 </div>
 </div>
+<div style="font-size: 60%;">
+<p>Este resultado indica que o algoritmo de detecção de outliers encontrou um evento estatisticamente significativo na sua série temporal.</p>
+<ul>
+<li><p><strong>Evento Detectado:</strong> Um outlier significativo foi identificado no <strong>ponto de índice 196</strong> da série .</p></li>
+<li><p><strong>Tipo de Outlier:</strong> A mensagem <code>"No AO detected"</code> informa que não foram encontrados Outliers Aditivos (pontos isolados atípicos). Portanto, o outlier encontrado no índice 196 é de outro tipo, muito provavelmente uma <strong>Mudança de Nível (Level Shift - LS)</strong>.</p></li>
+<li><p><strong>Significância e Impacto:</strong> O valor <code>lambda1</code> (<code>-4.84</code>) é a estatística-t do evento. Por ser um valor alto (em módulo), o outlier é <strong>altamente significativo</strong>. O sinal negativo indica que houve uma <strong>queda abrupta e permanente</strong> no nível médio da série a partir do ponto 196.</p></li>
+</ul>
+<p><strong>Em resumo:</strong> a análise sugere que algo mudou estruturalmente na série no 196º período que é maio de 2020, causando uma queda em seu patamar. Isso deve ser incorporado ao modelo final para melhorar a precisão das previsões.</p>
+</div>
+</section>
+
+<section class="title-slide slide level1 center">
+<h1>Análise de Intervenções</h1>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>Series: treino 
-Regression with ARIMA(1,1,1)(1,1,1)[12] errors 
+Regression with ARIMA(1,1,1)(0,1,1)[12] errors 
 
 Coefficients:
-         ar1      ma1    sar1     sma1       xreg
-      0.6301  -0.8922  0.0763  -1.0000  -64042.43
-s.e.  0.0783   0.0440  0.0737   0.1674   21652.59
+         ar1      ma1     sma1       xreg
+      0.6219  -0.8848  -0.9295  -64822.33
+s.e.  0.0793   0.0447   0.1088   21815.90
 
-sigma^2 = 699478001:  log likelihood = -2509.11
-AIC=5030.22   AICc=5030.63   BIC=5050.45
+sigma^2 = 734106319:  log likelihood = -2509.59
+AIC=5029.19   AICc=5029.47   BIC=5046.04
 
 Training set error measures:
-                    ME    RMSE      MAE        MPE     MAPE      MASE
-Training set -887.7099 25382.2 18625.84 -0.1475521 2.156237 0.4066978
+                   ME     RMSE      MAE        MPE     MAPE      MASE
+Training set -850.648 26064.73 19178.95 -0.1455986 2.219304 0.4187752
                     ACF1
-Training set -0.02305373</code></pre>
+Training set -0.02008813</code></pre>
 </div>
 </div>
+<div style="font-size: 50%;">
+<p>O modelo combina uma regressão linear com um modelo <strong>SARIMA <code>(1,1,1)(0,1,1)[12]</code></strong> para capturar a dinâmica dos erros, o que é uma abordagem poderosa.</p>
+<ul>
+<li><strong>Coeficientes Significativos:</strong> Todos os coeficientes, incluindo o da variável externa (<code>xreg</code>), são estatisticamente significativos. Isso indica que a variável <code>xreg</code> contribui de forma importante para a previsão.</li>
+<li><strong>Boa Acurácia:</strong> O erro percentual absoluto médio (<strong>MAPE</strong>) de <strong>2.22%</strong> é geralmente considerado um bom nível de precisão.</li>
+<li><strong>Resíduos Limpos:</strong> O valor de <strong>ACF1</strong> (-0.02) é muito próximo de zero, sugerindo que não há autocorrelação remanescente nos resíduos. Isso é um forte indicativo de que a estrutura do modelo capturou bem os padrões dos dados.</li>
+</ul>
+</div>
+</section>
 
-<img data-src="index_files/figure-revealjs/unnamed-chunk-19-1.png" width="960" class="r-stretch"></section>
+<section>
+<section class="title-slide slide level1 center">
+<h1>Análise de Intervenções</h1>
+<p>Fazendo agora o Gráfico de Previsão com a Interveção colocada</p>
 
+<img data-src="index_files/figure-revealjs/unnamed-chunk-24-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+<h2>Modelo Final</h2>
+<div style="font-size: 60%;">
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Componente</th>
+<th style="text-align: left;">Termo na Equação</th>
+<th style="text-align: left;">Valor/Parâmetro Estimado</th>
+<th style="text-align: left;">Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Autorregressivo (AR)</strong></td>
+<td style="text-align: left;"><code>(1 - 0.6219 B)</code></td>
+<td style="text-align: left;"><code>φ₁ = 0.6219</code></td>
+<td style="text-align: left;">Modela a dependência do valor atual com o do período anterior (memória de curto prazo).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Média Móvel (MA)</strong></td>
+<td style="text-align: left;"><code>(1 - 0.8848 B)</code></td>
+<td style="text-align: left;"><code>θ₁ = -0.8848</code></td>
+<td style="text-align: left;">Modela a dependência do valor atual com o erro de previsão do período anterior.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Média Móvel Sazonal</strong></td>
+<td style="text-align: left;"><code>(1 - 0.9295 B¹²)</code></td>
+<td style="text-align: left;"><code>Θ₁ = -0.9295</code></td>
+<td style="text-align: left;">Modela a dependência com o erro de previsão do mesmo mês no ano anterior.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Diferenciação</strong></td>
+<td style="text-align: left;"><code>(1 - B)(1 - B¹²)</code></td>
+<td style="text-align: left;">N/A (Operadores)</td>
+<td style="text-align: left;">Remove a tendência e a sazonalidade para tornar a série estacionária.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Efeito da Intervenção</strong></td>
+<td style="text-align: left;"><code>-64822.33 * ... * P_t</code></td>
+<td style="text-align: left;"><code>ω = -64822.33</code></td>
+<td style="text-align: left;">O impacto imediato do evento, causando uma queda de ~64.8k unidades.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Erro Aleatório</strong></td>
+<td style="text-align: left;"><code>a_t</code></td>
+<td style="text-align: left;">N/A (Variável)</td>
+<td style="text-align: left;">Flutuações imprevisíveis restantes após a modelagem dos outros componentes.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="slide level2">
+<h2>Modelo Final</h2>
+<p>Esta é a equação do modelo final com intervenção, com os valores estimados a partir dos dados.</p>
+<p>O coeficiente <strong>-64822.33</strong> (<code>ω</code>) representa o <strong>impacto imediato e pontual</strong> do evento de intervenção (no tempo <span class="math inline">\(T\)</span>). Isso significa que, no momento em que ocorreu, o evento causou uma <strong>queda estimada de aproximadamente 64.822 unidades</strong> no nível da série.</p>
+<p>Os outros coeficientes (<code>ar1=0.6219</code>, <code>ma1=-0.8848</code>, <code>sma1=-0.9295</code>) definem a “memória” da série, ou seja, como o efeito desse choque inicial e de outras flutuações aleatórias se dissipam e se propagam ao longo dos meses seguintes.</p>
+</section></section>
+<section>
 <section class="title-slide slide level1 center">
 <h1>Conclusão das análises e modelos</h1>
 
 </section>
-
+<section class="slide level2">
+<h2>Conclusão das análises e modelos</h2>
+<div style="font-size: 60%;">
+<p>Avaliamos quatro modelos de duas famílias principais: <strong>ARIMA</strong> e <strong>ETS</strong>.</p>
+<ol type="1">
+<li><strong>Regressão com Erros ARIMA (Dinâmico)</strong>
+<ul>
+<li><code>Regression with ARIMA(1,1,1)(0,1,1)[12] errors</code></li>
+<li>Inclui uma variável externa (<code>xreg</code>) para melhorar a previsão.</li>
+</ul></li>
+<li><strong>ARIMA Sazonal (SARIMA)</strong>
+<ul>
+<li><code>ARIMA(1,1,1)(0,1,1)[12]</code></li>
+</ul></li>
+<li><strong>ARIMA Sazonal (Alternativo)</strong>
+<ul>
+<li><code>ARIMA(1,1,1)(1,0,0)[12]</code></li>
+</ul></li>
+<li><strong>ETS (Suavização Exponencial)</strong>
+<ul>
+<li><code>ETS(M,Ad,M)</code> - (Erro Multiplicativo, Tendência Aditiva Amortecida, Sazonalidade Multiplicativa)</li>
+</ul></li>
+</ol>
+<section class="slide level2">
+<h2>Conclusão das análises e modelos</h2>
+<h3><strong>Qualidade do Ajuste vs.&nbsp;Complexidade</strong></h3>
+<ul>
+<li><strong>AIC, AICc, BIC:</strong> Penalizam modelos complexos para evitar sobreajuste.</li>
+<li><strong><em>Quanto menor, melhor.</em></strong></li>
+</ul>
+<h4><strong>Acurácia da Previsão (no treino)</strong></h4>
+<ul>
+<li><strong>RMSE, MAE, MAPE:</strong> Medem o erro médio das previsões.</li>
+<li><strong><em>Quanto menor, melhor.</em></strong></li>
+</ul>
+</section>
+</div>
+</section>
+<section class="slide level2">
+<h2>Resultados: Qualidade do Ajuste</h2>
+<p>Comparamos os critérios de informação. Valores mais baixos indicam um melhor equilíbrio entre o ajuste do modelo e sua simplicidade.</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Modelo</th>
+<th style="text-align: left;">AIC</th>
+<th style="text-align: left;">BIC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Reg-ARIMA</strong> 🏆</td>
+<td style="text-align: left;"><strong>5029.19</strong></td>
+<td style="text-align: left;"><strong>5046.04</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARIMA (0,1,1)[12]</td>
+<td style="text-align: left;">5035.95</td>
+<td style="text-align: left;">5049.43</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARIMA (1,0,0)[12]</td>
+<td style="text-align: left;">5326.89</td>
+<td style="text-align: left;">5340.59</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ETS(M,Ad,M)</td>
+<td style="text-align: left;">5878.42</td>
+<td style="text-align: left;">5940.15</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Conclusão:</strong> O modelo <strong>Regressão com Erros ARIMA</strong> se mostra superior, sugerindo que a variável externa (<code>xreg</code>) adiciona valor real.</p>
+</section>
+<section class="slide level2">
+<h2>Resultados: Acurácia da Previsão</h2>
+<p>Analisamos os erros de previsão no conjunto de dados de treino.</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Modelo</th>
+<th style="text-align: left;">RMSE</th>
+<th style="text-align: left;">MAE</th>
+<th style="text-align: left;">MAPE (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Reg-ARIMA</strong> 🏆</td>
+<td style="text-align: left;"><strong>26064.73</strong></td>
+<td style="text-align: left;"><strong>19178.95</strong></td>
+<td style="text-align: left;"><strong>2.22%</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARIMA (0,1,1)[12]</td>
+<td style="text-align: left;">26697.04</td>
+<td style="text-align: left;">19381.64</td>
+<td style="text-align: left;">2.24%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARIMA (1,0,0)[12]</td>
+<td style="text-align: left;">29490.90</td>
+<td style="text-align: left;">22057.06</td>
+<td style="text-align: left;">2.61%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ETS(M,Ad,M)</td>
+<td style="text-align: left;">26608.53</td>
+<td style="text-align: left;">19550.13</td>
+<td style="text-align: left;">2.29%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Conclusão:</strong> O <strong>Reg-ARIMA</strong> consistentemente produz os menores erros, confirmando sua maior precisão.</p>
+</section>
+<section class="slide level2">
+<h2>O Veredito: O Modelo Vencedor</h2>
+<p>O modelo <strong>Regressão com Erros ARIMA(1,1,1)(0,1,1)[12]</strong> é a escolha recomendada.</p>
+<h3>Por que ele venceu?</h3>
+<ul>
+<li>✅ <strong>Menores Critérios de Informação (AIC &amp; BIC):</strong> Melhor equilíbrio entre ajuste e complexidade.</li>
+<li>✅ <strong>Menores Erros de Previsão (RMSE &amp; MAE):</strong> Previsões mais acuradas.</li>
+<li>✅ <strong>Poder Explicativo Adicional:</strong> A variável externa <code>xreg</code> é estatisticamente significativa e melhora o desempenho do modelo em relação a um ARIMA puro.</li>
+</ul>
+</section></section>
 <section class="title-slide slide level1 center">
 <h1>Referências Teóricas</h1>
 <ul>
@@ -676,17 +1030,10 @@ Training set -0.02305373</code></pre>
 </ul>
 </section>
 
-<section>
 <section class="title-slide slide level1 center">
 <h1>Obrigado !!</h1>
 
 </section>
-<section class="slide level2">
-<h2>Frase Final:</h2>
-<p>“Não podemos prever o futuro, mas podemos criá-lo.”</p>
-<p>Peter Drucker</p>
-
-</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="images/logo.png" class="slide-logo"></p>
