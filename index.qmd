@@ -83,7 +83,7 @@ pacman::p_load(forecast, tseries, ggplot2, patchwork,gridExtra, urca, lubridate,
 # 2. CARREGAMENTO E PREPARAÇÃO DOS DADOS
 #-----------------------------------------------------------------------
 # Carregar o arquivo CSV
-file_path <- "C:/Users/thali/Desktop/Área de Trabalho/Serie temporal/Análise de Energia eletrica industrial do Ceará/Slide/Analise de Serie Temporal - EECE/Bases/CMEIC.xlsx"
+file_path <- "C:/Users/thali/Desktop/Área de Trabalho/Serie temporal/Análise de Energia eletrica industrial do Ceará/Slide/Analise-da-Serie-EPE-CE/Bases/CMEIC.xlsx"
 dados_completos <- read_excel(file_path)
 
 # Renomear colunas para facilitar o manuseio (assumindo a ordem das colunas)

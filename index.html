@@ -128,7 +128,7 @@
 
 <section class="quarto-title-block center">
   <h1 class="title">Análise da Série de Consumo de Energia Elétrica no Ceará</h1>
-  <p class="subtitle">CC0308 - 2025 | Julho 2025 <br><br> Slides:<strong>thalisreboucas.github.io/Amostragem_Regressao_DuasFases/#/</strong></p>
+  <p class="subtitle">CC0308 - 2025 | Julho 2025 <br><br> Slides:<strong>https://thalisreboucas.github.io/Analise-da-Serie-EPE-CE/#/</strong></p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -141,6 +141,7 @@ Thalis Rebouças
 </section>
 <section class="slide level2">
 <h2>Sumário de aprendizagem</h2>
+<div style="font-size: 70%;">
 <ul>
 <li><p>Resumo Geral</p>
 <ol type="1">
@@ -160,6 +161,7 @@ Thalis Rebouças
 <li><p>Referências</p></li>
 </ol></li>
 </ul>
+</div>
 </section>
 <section class="title-slide slide level1 center">
 <h1>Vamos lá!</h1>
@@ -344,7 +346,7 @@ s_t &amp;= \gamma \cdot \frac{y_t}{l_t} + (1 - \gamma) \cdot s_{t-m}
 </section>
 <section class="slide level2">
 <h2>Método de Suavização Exponencial</h2>
-
+<p><strong>Métricas de desempenho no conjunto de treino:</strong> * RMSE: 26.608,53 * MAE: 19.550,13 * MAPE: 2,29% ⇒ Erro percentual muito baixo * ACF dos resíduos: 0,066 ⇒ Baixa autocorrelação</p>
 </section>
 <section class="slide level2">
 <h2>Método de Suavização Exponencial</h2>
@@ -360,22 +362,13 @@ s_t &amp;= 0{,}0001 \cdot \frac{y_t}{l_t} + (1 - 0{,}0001) \cdot s_{t-12}
 </section>
 <section class="slide level2">
 <h2>Método de Suavização Exponencial</h2>
-<div class="cell">
 
-<div class="cell-output cell-output-stdout">
-<pre><code>
-    Ljung-Box test
-
-data:  Residuals from ETS(M,Ad,M)
-Q* = 33.468, df = 24, p-value = 0.09457
-
-Model df: 0.   Total lags used: 24</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>NULL</code></pre>
-</div>
-</div>
-<img data-src="index_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch"></section>
+<img data-src="index_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch"><ul>
+<li>Modelo meio ajustado</li>
+<li>Captura tendência suavizada e sazonalidade proporcional fraca</li>
+<li>Resíduos sem padrão aparente</li>
+</ul>
+</section>
 <section class="slide level2">
 <h2>Método de Suavização Exponencial</h2>
 
@@ -502,7 +495,7 @@ print(acuracia_arima[2, c("RMSE", "MAE", "MAPE")])
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="images/logo.png" class="slide-logo"></p>
 <div class="footer footer-default">
-<p>Slides por Thalis Rebouças, feito em <a href="https://quarto.org/docs/presentations/revealjs/index.html">Quarto</a>. Código disponível <a href="https://github.com/thalisreboucas/Amostragem_Regressao_DuasFases">no GitHub</a>.</p>
+<p>Slides por Thalis Rebouças, feito em <a href="https://quarto.org/docs/presentations/revealjs/index.html">Quarto</a>. Código disponível <a href="https://github.com/thalisreboucas/Analise-da-Serie-EPE-CE">no GitHub</a>.</p>
 </div>
 </div></div>
 
