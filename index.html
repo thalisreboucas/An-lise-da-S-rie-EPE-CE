@@ -637,7 +637,28 @@ ind     196.000000
 lambda1  -4.809489</code></pre>
 </div>
 </div>
-</section>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Series: treino 
+Regression with ARIMA(1,1,1)(1,1,1)[12] errors 
+
+Coefficients:
+         ar1      ma1    sar1     sma1       xreg
+      0.6301  -0.8922  0.0763  -1.0000  -64042.43
+s.e.  0.0783   0.0440  0.0737   0.1674   21652.59
+
+sigma^2 = 699478001:  log likelihood = -2509.11
+AIC=5030.22   AICc=5030.63   BIC=5050.45
+
+Training set error measures:
+                    ME    RMSE      MAE        MPE     MAPE      MASE
+Training set -887.7099 25382.2 18625.84 -0.1475521 2.156237 0.4066978
+                    ACF1
+Training set -0.02305373</code></pre>
+</div>
+</div>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-19-1.png" width="960" class="r-stretch"></section>
 
 <section class="title-slide slide level1 center">
 <h1>Conclusão das análises e modelos</h1>
@@ -645,9 +666,13 @@ lambda1  -4.809489</code></pre>
 </section>
 
 <section class="title-slide slide level1 center">
-<h1>Referências</h1>
+<h1>Referências Teóricas</h1>
 <ul>
-<li>Chapman, Sampling Design and Analysis (Chapman HallCRC Texts in Statistical Science), 3rd Edition.</li>
+<li><p>Box, G. E. P., Jenkins, G. M., Reinsel, G. C., &amp; Ljung, G. M., <em>Time Series Analysis: Forecasting and Control</em> (Wiley Series in Probability and Statistics), 5th Edition.</p></li>
+<li><p>Brockwell, P. J., &amp; Davis, R. A., <em>Time Series: Theory and Methods</em> (Springer Series in Statistics), 2nd Edition.</p></li>
+<li><p>Hamilton, J. D., <em>Time Series Analysis</em> (Princeton University Press), 1st Edition.</p></li>
+<li><p>Morettin, P. A., &amp; Toloi, C. M. C., <em>Séries Temporais em R: Análise e Previsão</em> (Blucher), 1st Edition.</p></li>
+<li><p>Shumway, R. H., &amp; Stoffer, D. S., <em>Time Series Analysis and Its Applications: With R Examples</em> (Springer Texts in Statistics), 4th Edition.</p></li>
 </ul>
 </section>
 

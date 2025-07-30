@@ -654,15 +654,68 @@ autoplot(previsao_modelo2) +
 detectAO(Modelo2)
 detectIO(Modelo2)
 ```
+```{r}
+# Primeiro, pegamos o tamanho do seu conjunto de treino
+n_treino <- length(treino)
+
+# Criamos um vetor de zeros com o mesmo tamanho do treino
+# Este será nosso regressor para o outlier
+outlier_ao_196 <- rep(0, n_treino)
+
+# Agora, colocamos o valor 1 na posição 196, que é o índice do outlier
+outlier_ao_196[196] <- 1
+```
+
+
+```{r}
+# Carregue a biblioteca 'forecast' para usar a função Arima (maiúsculo)
+library(forecast)
+
+# Ajuste o modelo SARIMA incluindo o regressor do outlier
+# Use a função Arima() do pacote forecast, que lida melhor com xreg
+Modelo2_com_outlier <- Arima(treino, 
+                             order = c(1, 1, 1), 
+                             seasonal = list(order = c(1, 1, 1), period = 12),
+                             xreg = outlier_ao_196) # <-- AQUI ESTÁ A MÁGICA
+
+# Veja o resumo do novo modelo
+summary(Modelo2_com_outlier)
+```
+```{r}
+# Ajuste o modelo ARIMA
+# Defina o horizonte de previsão (ex: 24 meses)
+h_previsao <- 27
+
+# Crie o xreg para o período futuro. Como o outlier não vai se repetir,
+# ele será um vetor de zeros.
+xreg_futuro <- rep(0, h_previsao)
+# Faça a previsão para os próximos 24 períodos (por exemplo, 2 anos)
+previsao_modelo2 <- forecast(Modelo2_com_outlier,27,xreg = xreg_futuro)
+# Gráfico da previsão vs. dados de teste 
+autoplot(previsao_modelo2) +
+  autolayer(teste, series="Dados Reais") +
+  labs(title='Gráfico 2: Previsão com ETS(M,Ad,M) vs. Dados de Teste', 
+       x='Ano', y='Índice',
+       caption = 'Linha azul: Previsão ETS. Sombreado: Intervalos de Confiança.') +
+  theme_minimal()
+```
+
 
 
 # Conclusão das análises e modelos
 
 
-# Referências
+# Referências Teóricas
 
-- Chapman, Sampling Design and Analysis (Chapman  HallCRC Texts in Statistical Science), 3rd Edition.
+- Box, G. E. P., Jenkins, G. M., Reinsel, G. C., & Ljung, G. M., *Time Series Analysis: Forecasting and Control* (Wiley Series in Probability and Statistics), 5th Edition.
 
+- Brockwell, P. J., & Davis, R. A., *Time Series: Theory and Methods* (Springer Series in Statistics), 2nd Edition.
+
+- Hamilton, J. D., *Time Series Analysis* (Princeton University Press), 1st Edition.
+
+- Morettin, P. A., & Toloi, C. M. C., *Séries Temporais em R: Análise e Previsão* (Blucher), 1st Edition.
+
+- Shumway, R. H., & Stoffer, D. S., *Time Series Analysis and Its Applications: With R Examples* (Springer Texts in Statistics), 4th Edition.
 
 # Obrigado !! 
 
