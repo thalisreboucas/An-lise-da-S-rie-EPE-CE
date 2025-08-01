@@ -779,7 +779,7 @@ o Ajuste para um modelo final foi removido o termo não significativo sar1. O no
 ```{r}
 Modelo3 <- Arima(treino, order = c(1, 1, 1), seasonal = c(0,1,1))
 
-summary(Modelo2)
+summary(Modelo3)
 ```
 ## Sugestão Modelo Final
 
@@ -800,9 +800,9 @@ $$
 # Ajuste o modelo ARIMA
 
 # Faça a previsão para os próximos 24 períodos (por exemplo, 2 anos)
-previsao_modelo2 <- forecast(Modelo3,27)
+previsao_modelo3 <- forecast(Modelo3,27)
 # Gráfico da previsão vs. dados de teste 
-autoplot(previsao_modelo2) +
+autoplot(previsao_modelo3) +
   autolayer(teste, series="Dados Reais") +
   labs(title='Gráfico 3: Previsão com Sarima(1,1,1)x(0,1,1)12  vs. Dados de Teste', 
        x='Ano', y='Índice',
